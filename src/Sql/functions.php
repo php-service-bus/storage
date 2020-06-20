@@ -39,11 +39,11 @@ use ServiceBus\Storage\Common\ResultSet;
 function fetchAll(ResultSet $iterator): Promise
 {
     return call(
-        static function() use ($iterator): \Generator
+        static function () use ($iterator): \Generator
         {
             $array = [];
 
-            while(yield $iterator->advance())
+            while (yield $iterator->advance())
             {
                 $array[] = $iterator->getCurrent();
             }
@@ -66,18 +66,18 @@ function fetchAll(ResultSet $iterator): Promise
 function fetchOne(ResultSet $iterator): Promise
 {
     return call(
-        static function() use ($iterator): \Generator
+        static function () use ($iterator): \Generator
         {
             /** @var array $collection */
             $collection   = yield fetchAll($iterator);
             $resultsCount = \count($collection);
 
-            if(0 === $resultsCount || 1 === $resultsCount)
+            if (0 === $resultsCount || 1 === $resultsCount)
             {
                 /** @var array|bool $endElement */
                 $endElement = \end($collection);
 
-                if($endElement !== false)
+                if ($endElement !== false)
                 {
                     return $endElement;
                 }
@@ -105,7 +105,7 @@ function fetchOne(ResultSet $iterator): Promise
 function sequence(string $sequenceName, QueryExecutor $executor): Promise
 {
     return call(
-        static function(string $sequenceName) use ($executor): \Generator
+        static function (string $sequenceName) use ($executor): \Generator
         {
             /** @var \ServiceBus\Storage\Common\ResultSet $resultSet */
             $resultSet = yield $executor->execute(\sprintf('SELECT nextval(\'%s\')', $sequenceName));
@@ -144,7 +144,7 @@ function sequence(string $sequenceName, QueryExecutor $executor): Promise
 function find(QueryExecutor $queryExecutor, string $tableName, array $criteria = [], ?int $limit = null, array $orderBy = []): Promise
 {
     return call(
-        static function(string $tableName, array $criteria, ?int $limit, array $orderBy) use ($queryExecutor): \Generator
+        static function (string $tableName, array $criteria, ?int $limit, array $orderBy) use ($queryExecutor): \Generator
         {
             /**
              * @var string $query
@@ -185,7 +185,7 @@ function remove(QueryExecutor $queryExecutor, string $tableName, array $criteria
      * @psalm-suppress MixedArgument
      */
     return call(
-        static function(string $tableName, array $criteria) use ($queryExecutor): \Generator
+        static function (string $tableName, array $criteria) use ($queryExecutor): \Generator
         {
             /**
              * @var string $query
@@ -225,26 +225,25 @@ function buildQuery(
     array $criteria = [],
     array $orderBy = [],
     ?int $limit = null
-): array
-{
+): array {
     /** @var LatitudeQuery\DeleteQuery|LatitudeQuery\SelectQuery|LatitudeQuery\UpdateQuery $queryBuilder */
     $isFirstCondition = true;
 
-    foreach($criteria as $criteriaItem)
+    foreach ($criteria as $criteriaItem)
     {
         $methodName = $isFirstCondition === true ? 'where' : 'andWhere';
         $queryBuilder->{$methodName}($criteriaItem);
         $isFirstCondition = false;
     }
 
-    if($queryBuilder instanceof LatitudeQuery\SelectQuery)
+    if ($queryBuilder instanceof LatitudeQuery\SelectQuery)
     {
-        foreach($orderBy as $column => $direction)
+        foreach ($orderBy as $column => $direction)
         {
             $queryBuilder->orderBy($column, $direction);
         }
 
-        if(null !== $limit)
+        if (null !== $limit)
         {
             $queryBuilder->limit($limit);
         }
@@ -271,16 +270,16 @@ function buildQuery(
  */
 function unescapeBinary(QueryExecutor $queryExecutor, $data)
 {
-    if($queryExecutor instanceof BinaryDataDecoder)
+    if ($queryExecutor instanceof BinaryDataDecoder)
     {
-        if(\is_array($data) === false)
+        if (\is_array($data) === false)
         {
             return $queryExecutor->unescapeBinary((string) $data);
         }
 
-        foreach($data as $key => $value)
+        foreach ($data as $key => $value)
         {
-            if(empty($value) === false && \is_string($value) === true)
+            if (empty($value) === false && \is_string($value) === true)
             {
                 $data[$key] = $queryExecutor->unescapeBinary($value);
             }
@@ -299,7 +298,7 @@ function unescapeBinary(QueryExecutor $queryExecutor, $data)
  */
 function equalsCriteria(string $field, $value): CriteriaInterface
 {
-    if(\is_object($value) === true)
+    if (\is_object($value) === true)
     {
         $value = castObjectToString($value);
     }
@@ -316,7 +315,7 @@ function equalsCriteria(string $field, $value): CriteriaInterface
  */
 function notEqualsCriteria(string $field, $value): CriteriaInterface
 {
-    if(\is_object($value) === true)
+    if (\is_object($value) === true)
     {
         $value = castObjectToString($value);
     }
@@ -396,7 +395,7 @@ function castObjectToArray(object $object): array
     $result = [];
 
     /** @var float|int|object|string|null $value */
-    foreach(getObjectVars($object) as $key => $value)
+    foreach (getObjectVars($object) as $key => $value)
     {
         $result[toSnakeCase($key)] = cast($value);
     }
@@ -415,7 +414,7 @@ function getObjectVars(object $object): array
 {
     /** @var \Closure $closure */
     $closure = \Closure::bind(
-        function(): array
+        function (): array
         {
             /** @psalm-var object $this */
             return \get_object_vars($this);
@@ -443,7 +442,7 @@ function toSnakeCase(string $string): string
 {
     $replaced = \preg_replace('/(?<!^)[A-Z]/', '_$0', $string);
 
-    if(\is_string($replaced) === true)
+    if (\is_string($replaced) === true)
     {
         return \strtolower($replaced);
     }
@@ -462,7 +461,7 @@ function toSnakeCase(string $string): string
  */
 function cast($value)
 {
-    if($value === null || \is_scalar($value) === true)
+    if ($value === null || \is_scalar($value) === true)
     {
         return $value;
     }
@@ -479,7 +478,7 @@ function cast($value)
  */
 function castObjectToString(object $object): string
 {
-    if(\method_exists($object, '__toString') === true)
+    if (\method_exists($object, '__toString') === true)
     {
         /** @psalm-suppress InvalidCast Object have __toString method */
         return (string) $object;

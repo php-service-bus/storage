@@ -58,7 +58,7 @@ class AmpPostgreSQLResultSet implements ResultSet
 
         try
         {
-            if($this->originalResultSet instanceof AmpResultSet)
+            if ($this->originalResultSet instanceof AmpResultSet)
             {
                 /** @psalm-suppress TooManyTemplateParams */
                 return $this->originalResultSet->advance();
@@ -66,8 +66,8 @@ class AmpPostgreSQLResultSet implements ResultSet
 
             return new Success(false);
         }
-            // @codeCoverageIgnoreStart
-        catch(\Throwable $throwable)
+        // @codeCoverageIgnoreStart
+        catch (\Throwable $throwable)
         {
             throw new ResultSetIterationFailed($throwable->getMessage(), (int) $throwable->getCode(), $throwable);
         }
@@ -81,11 +81,10 @@ class AmpPostgreSQLResultSet implements ResultSet
     {
         try
         {
-            if(
+            if (
                 $this->originalResultSet instanceof PgSqlCommandResult ||
                 $this->originalResultSet instanceof PqCommandResult
-            )
-            {
+            ) {
                 return null;
             }
 
@@ -94,8 +93,8 @@ class AmpPostgreSQLResultSet implements ResultSet
 
             return $data;
         }
-            // @codeCoverageIgnoreStart
-        catch(\Throwable $throwable)
+        // @codeCoverageIgnoreStart
+        catch (\Throwable $throwable)
         {
             throw new ResultSetIterationFailed($throwable->getMessage(), (int) $throwable->getCode(), $throwable);
         }
@@ -110,13 +109,13 @@ class AmpPostgreSQLResultSet implements ResultSet
     public function lastInsertId(?string $sequence = null): Promise
     {
         return call(
-            function(): \Generator
+            function (): \Generator
             {
                 try
                 {
-                    if($this->originalResultSet instanceof PooledResultSet)
+                    if ($this->originalResultSet instanceof PooledResultSet)
                     {
-                        if($this->advanceCalled === false)
+                        if ($this->advanceCalled === false)
                         {
                             /** @psalm-suppress TooManyTemplateParams */
                             yield $this->originalResultSet->advance();
@@ -127,20 +126,20 @@ class AmpPostgreSQLResultSet implements ResultSet
                         /** @var array<string, mixed> $result */
                         $result = $this->originalResultSet->getCurrent();
 
-                        if(0 !== \count($result))
+                        if (0 !== \count($result))
                         {
                             /** @var bool|int|string $value */
                             $value = \reset($result);
 
-                            if(false !== $value)
+                            if (false !== $value)
                             {
                                 return (string) $value;
                             }
                         }
                     }
                 }
-                    // @codeCoverageIgnoreStart
-                catch(\Throwable $throwable)
+                // @codeCoverageIgnoreStart
+                catch (\Throwable $throwable)
                 {
                     throw new ResultSetIterationFailed($throwable->getMessage(), (int) $throwable->getCode(), $throwable);
                 }
@@ -156,18 +155,17 @@ class AmpPostgreSQLResultSet implements ResultSet
     {
         try
         {
-            if(
+            if (
                 $this->originalResultSet instanceof PgSqlCommandResult ||
                 $this->originalResultSet instanceof PqCommandResult
-            )
-            {
+            ) {
                 return $this->originalResultSet->getAffectedRowCount();
             }
 
             return 0;
         }
-            // @codeCoverageIgnoreStart
-        catch(\Throwable $throwable)
+        // @codeCoverageIgnoreStart
+        catch (\Throwable $throwable)
         {
             throw new ResultSetIterationFailed($throwable->getMessage(), (int) $throwable->getCode(), $throwable);
         }
