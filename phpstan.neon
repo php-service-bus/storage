@@ -1,0 +1,11 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#Unable to resolve the template type#'
+			path: %currentWorkingDirectory%/src
+		-
+			message: '#no value type specified in iterable type array#'
+			path: %currentWorkingDirectory%/src
+		-
+			message: '#with no value type specified#'
+			path: %currentWorkingDirectory%/src/Sql/DoctrineDBAL/
