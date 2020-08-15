@@ -63,11 +63,7 @@ final class AmpPostgreSQLTransaction implements Transaction
                 {
                     $this->logger->debug($queryString, $parameters);
 
-                    /**
-                     * @psalm-suppress TooManyTemplateParams
-                     *
-                     * @var AmpResultSet|PgSqlCommandResult|PooledResultSet|PqCommandResult $resultSet
-                     */
+                    /** @var AmpResultSet|PgSqlCommandResult|PooledResultSet|PqCommandResult $resultSet */
                     $resultSet = yield $this->transaction->execute($queryString, $parameters);
 
                     return new AmpPostgreSQLResultSet($resultSet);
@@ -127,7 +123,6 @@ final class AmpPostgreSQLTransaction implements Transaction
                 {
                     $this->logger->debug('ROLLBACK');
 
-                    /** @psalm-suppress TooManyTemplateParams */
                     yield $this->transaction->rollback();
                 }
                 // @codeCoverageIgnoreStart

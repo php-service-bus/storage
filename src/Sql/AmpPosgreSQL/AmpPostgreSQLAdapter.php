@@ -81,11 +81,7 @@ final class AmpPostgreSQLAdapter implements DatabaseAdapter
                 {
                     $this->logger->debug($queryString, $parameters);
 
-                    /**
-                     * @psalm-suppress TooManyTemplateParams
-                     *
-                     * @var AmpResultSet|PgSqlCommandResult|PooledResultSet|PqCommandResult $resultSet
-                     */
+                    /** @var AmpResultSet|PgSqlCommandResult|PooledResultSet|PqCommandResult $resultSet  */
                     $resultSet = yield $this->pool()->execute($queryString, $parameters);
 
                     return new AmpPostgreSQLResultSet($resultSet);
@@ -130,7 +126,6 @@ final class AmpPostgreSQLAdapter implements DatabaseAdapter
                      */
                     yield new Coroutine($generator);
 
-                    /** @psalm-suppress TooManyTemplateParams */
                     yield $transaction->commit();
                 }
                 catch (\Throwable $throwable)
@@ -161,11 +156,7 @@ final class AmpPostgreSQLAdapter implements DatabaseAdapter
                 {
                     $this->logger->debug('BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED');
 
-                    /**
-                     * @psalm-suppress TooManyTemplateParams
-                     *
-                     * @var \Amp\Postgres\Transaction $transaction
-                     */
+                    /** @var \Amp\Postgres\Transaction $transaction */
                     $transaction = yield $this->pool()->beginTransaction();
 
                     return new AmpPostgreSQLTransaction($transaction, $this->logger);

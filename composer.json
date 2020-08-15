@@ -41,18 +41,18 @@
     "ext-pgsql": "*",
     "php-service-bus/common": "v4.1.*",
     "php-service-bus/cache": "v4.1.*",
-    "amphp/postgres": "v1.2.*",
-    "latitude/latitude": "v4.1.*",
+    "amphp/postgres": "v1.3.*",
+    "latitude/latitude": "v4.2.*",
     "psr/log": "v1.1.*",
     "doctrine/dbal": "v2.10.*",
     "symfony/dependency-injection": "v5.1.*"
   },
   "require-dev": {
     "php-service-bus/code-style-config": "v1.2.*",
-    "phpunit/phpunit": "v9.1.*",
-    "vimeo/psalm": "v3.11.*",
+    "phpunit/phpunit": "v9.2.*",
+    "vimeo/psalm": "v3.13.*",
     "phpstan/phpstan": "v0.12.*",
-    "amphp/amp": "v2.4.*"
+    "amphp/amp": "v2.5.*"
   },
   "prefer-stable": true,
   "minimum-stability": "stable",

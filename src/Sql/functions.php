@@ -72,7 +72,7 @@ function fetchOne(ResultSet $iterator): Promise
             $collection   = yield fetchAll($iterator);
             $resultsCount = \count($collection);
 
-            if (0 === $resultsCount || 1 === $resultsCount)
+            if ($resultsCount === 0 || $resultsCount === 1)
             {
                 /** @var array|bool $endElement */
                 $endElement = \end($collection);
