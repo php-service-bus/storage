@@ -78,7 +78,7 @@ final class SqlMigrationProcessor
     {
         /** @psalm-suppress InvalidArgument */
         return $this->storage->transactional(
-            function(QueryExecutor $queryExecutor) use ($direction): \Generator
+            function (QueryExecutor $queryExecutor) use ($direction): \Generator
             {
                 /** @var Migration[] $migrations */
                 $migrations = yield from $this->migrationsLoader->load();
@@ -91,7 +91,7 @@ final class SqlMigrationProcessor
                  * @var string    $version
                  * @var Migration $migration
                  */
-                foreach($migrations as $version => $migration)
+                foreach ($migrations as $version => $migration)
                 {
                     /**
                      * @psalm-suppress InvalidScalarArgument
@@ -104,7 +104,7 @@ final class SqlMigrationProcessor
                     );
 
                     /** Миграция была добавлена ранее */
-                    if($resultSet->affectedRows() === 0)
+                    if ($resultSet->affectedRows() === 0)
                     {
                         $this->logger->debug('Skip "{version}" migration', ['version' => $version]);
 
@@ -119,7 +119,7 @@ final class SqlMigrationProcessor
                     /** @var array $parameters */
                     $parameters = readReflectionPropertyValue($migration, 'params');
 
-                    foreach($queries as $query)
+                    foreach ($queries as $query)
                     {
                         /** @psalm-suppress MixedArgument */
                         yield $queryExecutor->execute($query, $parameters[\sha1($query)] ?? []);
@@ -128,6 +128,4 @@ final class SqlMigrationProcessor
             }
         );
     }
-
-
 }

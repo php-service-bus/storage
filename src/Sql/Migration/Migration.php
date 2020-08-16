@@ -29,7 +29,6 @@ abstract class Migration
 
     final public function __construct()
     {
-
     }
 
     final protected function add(string $query, array $params = []): void

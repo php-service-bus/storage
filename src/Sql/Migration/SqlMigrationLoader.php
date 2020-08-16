@@ -42,14 +42,14 @@ final class SqlMigrationLoader
     public function load(): Promise
     {
         return call(
-            function(): \Generator
+            function (): \Generator
             {
                 $migrations = [];
 
                 /** @var \SplFileInfo[] $supportedFiles */
                 $supportedFiles = yield from $this->loadFiles();
 
-                foreach($supportedFiles as $file)
+                foreach ($supportedFiles as $file)
                 {
                     /**
                      * @psalm-suppress UnresolvableInclude
@@ -66,7 +66,7 @@ final class SqlMigrationLoader
 
                     $migration = new $class;
 
-                    if(($migration instanceof Migration) === false)
+                    if (($migration instanceof Migration) === false)
                     {
                         throw new \RuntimeException(
                             \sprintf('Migration must extend `%s` class', Migration::class)
@@ -91,14 +91,14 @@ final class SqlMigrationLoader
     private function loadFiles(): Promise
     {
         return call(
-            function(): \Generator
+            function (): \Generator
             {
                 /** @var string[] $files */
                 $files = yield scandir($this->directory);
 
                 return \array_filter(
                     \array_map(
-                        function(string $fileName): ?\SplFileInfo
+                        function (string $fileName): ?\SplFileInfo
                         {
                             return \strpos($fileName, 'Version') !== false
                                 ? new \SplFileInfo($this->directory . '/' . $fileName)
