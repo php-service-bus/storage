@@ -9,3 +9,6 @@ parameters:
 		-
 			message: '#with no value type specified#'
 			path: %currentWorkingDirectory%/src/Sql/DoctrineDBAL/
+		-
+		    message: '#parameters of method#'
+		    path: %currentWorkingDirectory%/src/Sql/Migration/SqlMigrationProcessor.php

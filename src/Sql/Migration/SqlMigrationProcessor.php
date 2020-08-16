@@ -14,8 +14,10 @@ namespace ServiceBus\Storage\Sql\Migration;
 
 use Amp\Promise;
 use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use ServiceBus\Storage\Common\DatabaseAdapter;
 use ServiceBus\Storage\Common\QueryExecutor;
+use function Amp\call;
 use function ServiceBus\Common\invokeReflectionMethod;
 use function ServiceBus\Common\readReflectionPropertyValue;
 
@@ -38,14 +40,16 @@ final class SqlMigrationProcessor
     /** @var LoggerInterface */
     private $logger;
 
-    public function __construct(DatabaseAdapter $storage, SqlMigrationLoader $migrationsLoader, LoggerInterface $logger)
+    public function __construct(DatabaseAdapter $storage, SqlMigrationLoader $migrationsLoader, ?LoggerInterface $logger = null)
     {
         $this->storage          = $storage;
         $this->migrationsLoader = $migrationsLoader;
-        $this->logger           = $logger;
+        $this->logger           = $logger ?? new NullLogger();
     }
 
     /**
+     * @return Promise<int>
+     *
      * @throws \RuntimeException Incorrect migration file
      * @throws \ServiceBus\Storage\Common\Exceptions\InvalidConfigurationOptions
      * @throws \ServiceBus\Storage\Common\Exceptions\ConnectionFailed
@@ -58,6 +62,8 @@ final class SqlMigrationProcessor
     }
 
     /**
+     * @return Promise<int>
+     *
      * @throws \RuntimeException Incorrect migration file
      * @throws \ServiceBus\Storage\Common\Exceptions\InvalidConfigurationOptions
      * @throws \ServiceBus\Storage\Common\Exceptions\ConnectionFailed
@@ -72,58 +78,79 @@ final class SqlMigrationProcessor
     /**
      * Performing migrations in a given direction (up / down)
      *
-     * @return Promise<void>
+     * @return Promise<int>
      */
     private function process(string $direction): Promise
     {
-        /** @psalm-suppress InvalidArgument */
-        return $this->storage->transactional(
-            function (QueryExecutor $queryExecutor) use ($direction): \Generator
+        return call(
+            function () use ($direction): \Generator
             {
-                /** @var Migration[] $migrations */
-                $migrations = yield from $this->migrationsLoader->load();
+                /** @var \ServiceBus\Storage\Common\Transaction $transaction */
+                $transaction = yield $this->storage->transaction();
 
-                yield $queryExecutor->execute(
-                    'CREATE TABLE IF NOT EXISTS migration ( version varchar NOT NULL );'
-                );
-
-                /**
-                 * @var string    $version
-                 * @var Migration $migration
-                 */
-                foreach ($migrations as $version => $migration)
+                try
                 {
+                    $executedQueries = 0;
+
                     /**
-                     * @psalm-suppress InvalidScalarArgument
-                     *
-                     * @var \ServiceBus\Storage\Common\ResultSet $resultSet
+                     * @psalm-var array<string, \ServiceBus\Storage\Sql\Migration\Migration> $migrations
                      */
-                    $resultSet = yield $queryExecutor->execute(
-                        'INSERT INTO migration (version) VALUES (?) ON CONFLICT DO NOTHING',
-                        [$version]
+                    $migrations = yield $this->migrationsLoader->load();
+
+                    yield $transaction->execute(
+                        'CREATE TABLE IF NOT EXISTS migration ( version varchar NOT NULL );'
                     );
 
-                    /** Миграция была добавлена ранее */
-                    if ($resultSet->affectedRows() === 0)
+                    /**
+                     * @var string    $version
+                     * @var Migration $migration
+                     */
+                    foreach ($migrations as $version => $migration)
                     {
-                        $this->logger->debug('Skip "{version}" migration', ['version' => $version]);
+                        /**
+                         * @psalm-suppress InvalidScalarArgument
+                         *
+                         * @var \ServiceBus\Storage\Common\ResultSet $resultSet
+                         */
+                        $resultSet = yield $transaction->execute(
+                            'INSERT INTO migration (version) VALUES (?) ON CONFLICT DO NOTHING',
+                            [$version]
+                        );
 
-                        continue;
+                        /** Миграция была добавлена ранее */
+                        if ($resultSet->affectedRows() === 0)
+                        {
+                            $this->logger->debug('Skip "{version}" migration', ['version' => $version]);
+
+                            continue;
+                        }
+
+                        invokeReflectionMethod($migration, $direction);
+
+                        /** @var string[] $queries */
+                        $queries = readReflectionPropertyValue($migration, 'queries');
+
+                        /** @var array $parameters */
+                        $parameters = readReflectionPropertyValue($migration, 'params');
+
+                        foreach ($queries as $query)
+                        {
+                            /** @psalm-suppress MixedArgument */
+                            yield $transaction->execute($query, $parameters[\sha1($query)] ?? []);
+
+                            $executedQueries++;
+                        }
                     }
 
-                    invokeReflectionMethod($migration, $direction);
+                    yield $transaction->commit();
 
-                    /** @var string[] $queries */
-                    $queries = readReflectionPropertyValue($migration, 'queries');
+                    return $executedQueries;
+                }
+                catch (\Throwable $throwable)
+                {
+                    yield $transaction->rollback();
 
-                    /** @var array $parameters */
-                    $parameters = readReflectionPropertyValue($migration, 'params');
-
-                    foreach ($queries as $query)
-                    {
-                        /** @psalm-suppress MixedArgument */
-                        yield $queryExecutor->execute($query, $parameters[\sha1($query)] ?? []);
-                    }
+                    throw $throwable;
                 }
             }
         );

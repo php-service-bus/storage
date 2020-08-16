@@ -46,10 +46,10 @@ final class SqlMigrationLoader
             {
                 $migrations = [];
 
-                /** @var \SplFileInfo[] $supportedFiles */
-                $supportedFiles = yield from $this->loadFiles();
+                /** @var \SplFileInfo[] $files */
+                $files = yield $this->loadFiles();
 
-                foreach ($supportedFiles as $file)
+                foreach ($files as $file)
                 {
                     /**
                      * @psalm-suppress UnresolvableInclude
@@ -61,19 +61,15 @@ final class SqlMigrationLoader
                     $name    = $file->getBasename('.' . $file->getExtension());
                     $version = (string) \substr($name, 7);
 
-                    /** @psalm-var class-string<\ServiceBus\Storage\Sql\Migration\Migration> $class */
+                    /** @var class-string<Migration> $class */
                     $class = \sprintf('\%s', $name);
 
                     $migration = new $class;
 
-                    if (($migration instanceof Migration) === false)
+                    if ($migration instanceof Migration)
                     {
-                        throw new \RuntimeException(
-                            \sprintf('Migration must extend `%s` class', Migration::class)
-                        );
+                        $migrations[$version] = $migration;
                     }
-
-                    $migrations[$version] = new $class;
                 }
 
                 \ksort($migrations);

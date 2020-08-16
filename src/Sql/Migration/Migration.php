@@ -33,8 +33,11 @@ abstract class Migration
 
     final protected function add(string $query, array $params = []): void
     {
-        $this->queries[]             = $query;
-        $this->params[\sha1($query)] = $params;
+        if ($query !== '')
+        {
+            $this->queries[]             = $query;
+            $this->params[\sha1($query)] = $params;
+        }
     }
 
     abstract protected function up(): void;
