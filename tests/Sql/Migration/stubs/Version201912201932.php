@@ -16,11 +16,11 @@ final class Version201912201932 extends Migration
 {
     protected function up(): void
     {
-        $this->add('SELECT datetime(\'now\',\'localtime\');');
+        $this->add('SELECT NOW()');
     }
 
     protected function down(): void
     {
-        $this->add('SELECT datetime(\'now\',\'localtime\');');
+        $this->add('SELECT NOW()');
     }
 }
