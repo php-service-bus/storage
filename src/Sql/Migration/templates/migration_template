@@ -1,0 +1,27 @@
+<?php
+
+declare(strict_types = 1);
+
+use ServiceBus\Storage\Sql\Migration\Migration;
+
+/**
+ *
+ */
+final class Version{version} extends Migration
+{
+    /**
+     * @inheritDoc
+     */
+    protected function up(): void
+    {
+
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function down(): void
+    {
+
+    }
+}

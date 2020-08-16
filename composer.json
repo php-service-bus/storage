@@ -45,7 +45,8 @@
     "latitude/latitude": "v4.2.*",
     "psr/log": "v1.1.*",
     "doctrine/dbal": "v2.10.*",
-    "symfony/dependency-injection": "v5.1.*"
+    "symfony/dependency-injection": "v5.1.*",
+    "amphp/file": "v1.0.*"
   },
   "require-dev": {
     "php-service-bus/code-style-config": "v1.2.*",
