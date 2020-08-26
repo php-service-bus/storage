@@ -30,8 +30,6 @@ use ServiceBus\Storage\Common\ResultSet;
  * Collect iterator data
  * Not recommended for use on large amounts of data.
  *
- * @psalm-suppress MixedReturnTypeCoercion
- *
  * @return Promise<array<int, mixed>>
  *
  * @throws \ServiceBus\Storage\Common\Exceptions\ResultSetIterationFailed
@@ -98,14 +96,12 @@ function fetchOne(ResultSet $iterator): Promise
 /**
  * Returns the value of the specified sequence (string).
  *
- * @psalm-suppress MixedReturnTypeCoercion
- *
  * @return Promise<string>
  */
 function sequence(string $sequenceName, QueryExecutor $executor): Promise
 {
     return call(
-        static function (string $sequenceName) use ($executor): \Generator
+        static function () use ($sequenceName, $executor): \Generator
         {
             /** @var \ServiceBus\Storage\Common\ResultSet $resultSet */
             $resultSet = yield $executor->execute(\sprintf('SELECT nextval(\'%s\')', $sequenceName));
@@ -120,8 +116,7 @@ function sequence(string $sequenceName, QueryExecutor $executor): Promise
             unset($resultSet);
 
             return (string) $result['nextval'];
-        },
-        $sequenceName
+        }
     );
 }
 
@@ -144,7 +139,7 @@ function sequence(string $sequenceName, QueryExecutor $executor): Promise
 function find(QueryExecutor $queryExecutor, string $tableName, array $criteria = [], ?int $limit = null, array $orderBy = []): Promise
 {
     return call(
-        static function (string $tableName, array $criteria, ?int $limit, array $orderBy) use ($queryExecutor): \Generator
+        static function () use ($queryExecutor, $tableName, $criteria, $limit, $orderBy): \Generator
         {
             /**
              * @var string $query
@@ -154,19 +149,14 @@ function find(QueryExecutor $queryExecutor, string $tableName, array $criteria =
             [$query, $parameters] = buildQuery(selectQuery($tableName), $criteria, $orderBy, $limit);
 
             return yield $queryExecutor->execute($query, $parameters);
-        },
-        $tableName,
-        $criteria,
-        $limit,
-        $orderBy
+        }
     );
 }
 
 /**
  * Create & execute DELETE query.
  *
- * @psalm-param    array<mixed, \Latitude\QueryBuilder\CriteriaInterface> $criteria
- * @psalm-suppress MixedTypeCoercion
+ * @psalm-param  array<array-key, \Latitude\QueryBuilder\CriteriaInterface> $criteria
  *
  * @param \Latitude\QueryBuilder\CriteriaInterface[] $criteria
  *
@@ -180,17 +170,12 @@ function find(QueryExecutor $queryExecutor, string $tableName, array $criteria =
  */
 function remove(QueryExecutor $queryExecutor, string $tableName, array $criteria = []): Promise
 {
-    /**
-     * @psalm-suppress InvalidArgument Incorrect psalm unpack parameters (...$args)
-     * @psalm-suppress MixedArgument
-     */
     return call(
-        static function (string $tableName, array $criteria) use ($queryExecutor): \Generator
+        static function () use ($queryExecutor, $tableName, $criteria): \Generator
         {
             /**
              * @var string $query
-             * @var array  $parameters
-             * @psalm-var array<string, string|int|float|null> $parameters
+             * @psalm-var array<array-key, string|int|float|null> $parameters
              */
             [$query, $parameters] = buildQuery(deleteQuery($tableName), $criteria);
 
@@ -204,16 +189,13 @@ function remove(QueryExecutor $queryExecutor, string $tableName, array $criteria
             unset($resultSet);
 
             return $affectedRows;
-        },
-        $tableName,
-        $criteria
+        }
     );
 }
 
 /**
  * Create query from specified parameters.
  *
- * @psalm-param array<mixed, \Latitude\QueryBuilder\CriteriaInterface> $criteria
  * @psalm-param array<string, string>                                  $orderBy
  *
  * @param \Latitude\QueryBuilder\CriteriaInterface[] $criteria

@@ -33,7 +33,7 @@ interface DatabaseAdapter extends QueryExecutor, BinaryDataDecoder
     /**
      * Executes a function in a transaction.
      *
-     * @psalm-param callable(\ServiceBus\Storage\Common\QueryExecutor):\Generator<void> $function
+     * @psalm-param callable(\ServiceBus\Storage\Common\QueryExecutor):\Generator $function
      *
      * @return Promise<void>
      *

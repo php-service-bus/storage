@@ -37,11 +37,6 @@ final class DoctrineDBALTransaction implements Transaction
         $this->logger     = $logger;
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @psalm-suppress MixedReturnTypeCoercion
-     */
     public function execute(string $queryString, array $parameters = []): Promise
     {
         $this->logger->debug($queryString, $parameters);
@@ -66,17 +61,11 @@ final class DoctrineDBALTransaction implements Transaction
         // @codeCoverageIgnoreStart
         catch (\Throwable $throwable)
         {
-            return new Failure(adaptDbalThrowable($throwable));
+            throw adaptDbalThrowable($throwable);
         }
         // @codeCoverageIgnoreEnd
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @psalm-suppress MixedReturnTypeCoercion
-     * @psalm-suppress InvalidReturnType
-     */
     public function commit(): Promise
     {
         /** @psalm-suppress InvalidReturnStatement */
@@ -99,12 +88,6 @@ final class DoctrineDBALTransaction implements Transaction
         );
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @psalm-suppress MixedReturnTypeCoercion
-     * @psalm-suppress InvalidReturnType
-     */
     public function rollback(): Promise
     {
         /** @psalm-suppress InvalidReturnStatement */
@@ -127,9 +110,6 @@ final class DoctrineDBALTransaction implements Transaction
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function unescapeBinary($payload): string
     {
         /** @var resource|string $payload */

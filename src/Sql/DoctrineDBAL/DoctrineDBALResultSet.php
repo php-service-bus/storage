@@ -75,11 +75,6 @@ final class DoctrineDBALResultSet implements ResultSet
         $this->resultsCount = \count($this->fetchResult);
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @psalm-suppress MixedReturnTypeCoercion
-     */
     public function advance(): Promise
     {
         $this->currentRow = null;
@@ -92,9 +87,6 @@ final class DoctrineDBALResultSet implements ResultSet
         return new Success(true);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getCurrent(): ?array
     {
         if (null !== $this->currentRow)

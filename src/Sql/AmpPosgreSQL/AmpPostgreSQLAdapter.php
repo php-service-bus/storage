@@ -60,18 +60,12 @@ final class AmpPostgreSQLAdapter implements DatabaseAdapter
 
     public function __destruct()
     {
-        /** @psalm-suppress RedundantConditionGivenDocblockType Null in case of error */
         if ($this->pool !== null)
         {
             $this->pool->close();
         }
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @psalm-suppress MixedReturnTypeCoercion
-     */
     public function execute(string $queryString, array $parameters = []): Promise
     {
         return call(
@@ -81,7 +75,7 @@ final class AmpPostgreSQLAdapter implements DatabaseAdapter
                 {
                     $this->logger->debug($queryString, $parameters);
 
-                    /** @var AmpResultSet|PgSqlCommandResult|PooledResultSet|PqCommandResult $resultSet  */
+                    /** @var AmpResultSet|PgSqlCommandResult|PooledResultSet|PqCommandResult $resultSet */
                     $resultSet = yield $this->pool()->execute($queryString, $parameters);
 
                     return new AmpPostgreSQLResultSet($resultSet);
@@ -94,21 +88,12 @@ final class AmpPostgreSQLAdapter implements DatabaseAdapter
         );
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @psalm-suppress MixedReturnTypeCoercion
-     */
     public function transactional(callable $function): Promise
     {
         return call(
             function () use ($function): \Generator
             {
-                /**
-                 * @psalm-suppress TooManyTemplateParams
-                 *
-                 * @var \Amp\Postgres\Transaction $originalTransaction
-                 */
+                /** @var \Amp\Postgres\Transaction $originalTransaction */
                 $originalTransaction = yield $this->pool()->beginTransaction();
 
                 $transaction = new AmpPostgreSQLTransaction($originalTransaction, $this->logger);
@@ -117,13 +102,10 @@ final class AmpPostgreSQLAdapter implements DatabaseAdapter
 
                 try
                 {
-                    /** @var \Generator<mixed> $generator */
+                    /** @var \Generator $generator */
                     $generator = $function($transaction);
 
-                    /**
-                     * @psalm-suppress MixedArgumentTypeCoercion
-                     * @psalm-suppress InvalidArgument
-                     */
+                    /** @psalm-suppress MixedArgumentTypeCoercion */
                     yield new Coroutine($generator);
 
                     yield $transaction->commit();
@@ -142,11 +124,6 @@ final class AmpPostgreSQLAdapter implements DatabaseAdapter
         );
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @psalm-suppress MixedReturnTypeCoercion
-     */
     public function transaction(): Promise
     {
         return call(
@@ -171,9 +148,6 @@ final class AmpPostgreSQLAdapter implements DatabaseAdapter
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function unescapeBinary($payload): string
     {
         if (\is_resource($payload) === true)

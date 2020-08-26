@@ -49,11 +49,6 @@ final class AmpPostgreSQLTransaction implements Transaction
         }
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @psalm-suppress MixedReturnTypeCoercion
-     */
     public function execute(string $queryString, array $parameters = []): Promise
     {
         return call(
@@ -78,11 +73,6 @@ final class AmpPostgreSQLTransaction implements Transaction
         );
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @psalm-suppress MixedReturnTypeCoercion
-     */
     public function commit(): Promise
     {
         return call(
@@ -109,11 +99,6 @@ final class AmpPostgreSQLTransaction implements Transaction
         );
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @psalm-suppress MixedReturnTypeCoercion
-     */
     public function rollback(): Promise
     {
         return call(
@@ -139,9 +124,6 @@ final class AmpPostgreSQLTransaction implements Transaction
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function unescapeBinary($payload): string
     {
         if (\is_resource($payload) === true)

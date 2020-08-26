@@ -38,10 +38,6 @@ class AmpPostgreSQLResultSet implements ResultSet
     private $advanceCalled = false;
 
     /**
-     * @noinspection   PhpDocSignatureInspection
-     *
-     * @psalm-suppress TypeCoercion Assume a different data type
-     *
      * @param AmpResultSet|PgSqlCommandResult|PooledResultSet|PqCommandResult $originalResultSet
      */
     public function __construct(object $originalResultSet)

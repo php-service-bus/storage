@@ -47,8 +47,6 @@ final class DoctrineDBALAdapter implements DatabaseAdapter
     }
 
     /**
-     * {@inheritdoc}
-     *
      * @psalm-suppress MixedReturnTypeCoercion
      */
     public function execute(string $queryString, array $parameters = []): Promise
@@ -77,15 +75,10 @@ final class DoctrineDBALAdapter implements DatabaseAdapter
         }
         catch (\Throwable $throwable)
         {
-            return new Failure(adaptDbalThrowable($throwable));
+            throw adaptDbalThrowable($throwable);
         }
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @psalm-suppress MixedReturnTypeCoercion
-     */
     public function transactional(callable $function): Promise
     {
         return call(
@@ -96,7 +89,7 @@ final class DoctrineDBALAdapter implements DatabaseAdapter
 
                 try
                 {
-                    /** @var \Generator<null> $generator */
+                    /** @var \Generator $generator */
                     $generator = $function($transaction);
 
                     yield from $generator;
@@ -117,11 +110,6 @@ final class DoctrineDBALAdapter implements DatabaseAdapter
         );
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @psalm-suppress MixedReturnTypeCoercion
-     */
     public function transaction(): Promise
     {
         try
@@ -135,14 +123,11 @@ final class DoctrineDBALAdapter implements DatabaseAdapter
         // @codeCoverageIgnoreStart
         catch (\Throwable $exception)
         {
-            return new Failure(adaptDbalThrowable($exception));
+            throw adaptDbalThrowable($exception);
         }
         // @codeCoverageIgnoreEnd
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function unescapeBinary($payload): string
     {
         /** @var resource|string $payload */

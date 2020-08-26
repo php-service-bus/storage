@@ -140,7 +140,6 @@ final class StorageConfiguration
 
         if ($databaseName !== null)
         {
-            /** @psalm-suppress PossiblyInvalidArgument */
             $databaseName = \ltrim($databaseName, '/');
         }
 

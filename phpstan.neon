@@ -1,14 +1,7 @@
 parameters:
-	ignoreErrors:
-		-
-			message: '#Unable to resolve the template type#'
-			path: %currentWorkingDirectory%/src
-		-
-			message: '#no value type specified in iterable type array#'
-			path: %currentWorkingDirectory%/src
-		-
-			message: '#with no value type specified#'
-			path: %currentWorkingDirectory%/src/Sql/DoctrineDBAL/
-		-
-		    message: '#parameters of method#'
-		    path: %currentWorkingDirectory%/src/Sql/Migration/SqlMigrationProcessor.php
+    checkGenericClassInNonGenericObjectType: false
+    checkMissingIterableValueType: false
+    ignoreErrors:
+        -
+            message: '#Unable to resolve the template type#'
+            path: %currentWorkingDirectory%/src

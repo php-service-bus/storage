@@ -22,7 +22,7 @@ interface QueryExecutor
     /**
      * Execute query.
      *
-     * @psalm-param array<string, string|int|float|null> $parameters
+     * @psalm-param array<array-key, string|int|float|null> $parameters
      *
      * @return Promise<\ServiceBus\Storage\Common\ResultSet>
      *

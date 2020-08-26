@@ -108,8 +108,6 @@ final class SqlMigrationProcessor
                     foreach ($migrations as $version => $migration)
                     {
                         /**
-                         * @psalm-suppress InvalidScalarArgument
-                         *
                          * @var \ServiceBus\Storage\Common\ResultSet $resultSet
                          */
                         $resultSet = yield $transaction->execute(
@@ -135,8 +133,10 @@ final class SqlMigrationProcessor
 
                         foreach ($queries as $query)
                         {
-                            /** @psalm-suppress MixedArgument */
-                            yield $transaction->execute($query, $parameters[\sha1($query)] ?? []);
+                            /** @psalm-var array<array-key, string|int|float|null> $queryParameters */
+                            $queryParameters = $parameters[\sha1($query)] ?? [];
+
+                            yield $transaction->execute($query, $queryParameters);
 
                             $executedQueries++;
                         }
