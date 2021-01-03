@@ -1,8 +1,10 @@
 ## What is it?
+
+[![Packagist](https://img.shields.io/packagist/v/php-service-bus/storage.svg)](https://packagist.org/packages/php-service-bus/storage)
+[![Packagist](https://img.shields.io/packagist/dt/php-service-bus/storage.svg)](https://packagist.org/packages/php-service-bus/storage)
 ![Continuous Integration](https://github.com/php-service-bus/storage/workflows/Continuous%20Integration/badge.svg)
+[![codecov](https://codecov.io/gh/php-service-bus/storage/branch/v4.2/graph/badge.svg?token=0bKwdiuo0S)](https://codecov.io/gh/php-service-bus/storage)
 [![Shepherd](https://shepherd.dev/github/php-service-bus/storage/coverage.svg)](https://shepherd.dev/github/php-service-bus/storage)
-[![Code Coverage](https://scrutinizer-ci.com/g/php-service-bus/storage/badges/coverage.png?b=v4.2)](https://scrutinizer-ci.com/g/php-service-bus/storage/?branch=v4.2)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/php-service-bus/storage/badges/quality-score.png?b=v4.2)](https://scrutinizer-ci.com/g/php-service-bus/storage/?branch=v4.2)
 
 This component is part of the [PHP Service Bus](https://github.com/php-service-bus/service-bus): contains database layer implementations
 
