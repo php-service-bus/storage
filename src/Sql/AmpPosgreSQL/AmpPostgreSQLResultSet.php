@@ -45,9 +45,6 @@ class AmpPostgreSQLResultSet implements ResultSet
         $this->originalResultSet = $originalResultSet;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function advance(): Promise
     {
         $this->advanceCalled = true;
@@ -69,9 +66,6 @@ class AmpPostgreSQLResultSet implements ResultSet
         // @codeCoverageIgnoreEnd
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getCurrent(): ?array
     {
         try
@@ -96,11 +90,6 @@ class AmpPostgreSQLResultSet implements ResultSet
         // @codeCoverageIgnoreEnd
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @psalm-suppress MixedReturnTypeCoercion
-     */
     public function lastInsertId(?string $sequence = null): Promise
     {
         return call(
@@ -142,9 +131,6 @@ class AmpPostgreSQLResultSet implements ResultSet
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function affectedRows(): int
     {
         try

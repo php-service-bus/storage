@@ -82,7 +82,6 @@ final class AmpPostgreSQLTransaction implements Transaction
                 {
                     $this->logger->debug('COMMIT');
 
-                    /** @psalm-suppress TooManyTemplateParams */
                     yield $this->transaction->commit();
                 }
                 // @codeCoverageIgnoreStart
