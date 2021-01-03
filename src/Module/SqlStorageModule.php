@@ -1,7 +1,7 @@
 <?php
 
 /**
- * SQL adapters support module.
+ * SQL database adapter implementation.
  *
  * @author  Maksim Masiukevich <dev@async-php.com>
  * @license MIT

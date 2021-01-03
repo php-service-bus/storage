@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Common storage parts.
+ * SQL database adapter implementation.
  *
  * @author  Maksim Masiukevich <dev@async-php.com>
  * @license MIT

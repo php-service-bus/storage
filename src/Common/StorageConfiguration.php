@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Common storage parts.
+ * SQL database adapter implementation.
  *
  * @author  Maksim Masiukevich <dev@async-php.com>
  * @license MIT
@@ -40,14 +40,14 @@ final class StorageConfiguration
      *
      * @var string|null
      */
-    public $host = null;
+    public $host;
 
     /**
      * Database port.
      *
      * @var int|null
      */
-    public $port = null;
+    public $port;
 
     /**
      * Database user.
@@ -61,14 +61,14 @@ final class StorageConfiguration
      *
      * @var string|null
      */
-    public $password = null;
+    public $password;
 
     /**
      * Database name.
      *
      * @var string|null
      */
-    public $databaseName = null;
+    public $databaseName;
 
     /**
      * Connection encoding.
@@ -156,7 +156,7 @@ final class StorageConfiguration
         /** @var string|null $value */
         $value = $collection[$key];
 
-        if (empty($value) === true)
+        if (empty($value))
         {
             return $default;
         }

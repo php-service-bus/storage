@@ -13,7 +13,6 @@ declare(strict_types = 1);
 namespace ServiceBus\Storage\Sql\DoctrineDBAL;
 
 use function Amp\call;
-use Amp\Failure;
 use Amp\Promise;
 use Amp\Success;
 use Doctrine\DBAL\Connection;
@@ -44,23 +43,14 @@ final class DoctrineDBALTransaction implements Transaction
         try
         {
             $statement = $this->connection->prepare($queryString);
-            $isSuccess = $statement->execute($parameters);
+            $result = $statement->execute($parameters);
 
-            if ($isSuccess === false)
-            {
-                // @codeCoverageIgnoreStart
-                /** @var string $message Driver-specific error message */
-                $message = $this->connection->errorInfo()[2];
-
-                throw new \RuntimeException($message);
-                // @codeCoverageIgnoreEnd
-            }
-
-            return new Success(new DoctrineDBALResultSet($this->connection, $statement));
+            return new Success(new DoctrineDBALResultSet($this->connection, $result));
         }
         // @codeCoverageIgnoreStart
         catch (\Throwable $throwable)
         {
+            /** @noinspection PhpUnhandledExceptionInspection */
             throw adaptDbalThrowable($throwable);
         }
         // @codeCoverageIgnoreEnd
@@ -68,7 +58,6 @@ final class DoctrineDBALTransaction implements Transaction
 
     public function commit(): Promise
     {
-        /** @psalm-suppress InvalidReturnStatement */
         return call(
             function (): void
             {
@@ -90,7 +79,6 @@ final class DoctrineDBALTransaction implements Transaction
 
     public function rollback(): Promise
     {
-        /** @psalm-suppress InvalidReturnStatement */
         return call(
             function (): void
             {
@@ -101,7 +89,7 @@ final class DoctrineDBALTransaction implements Transaction
                     $this->connection->rollBack();
                 }
                 // @codeCoverageIgnoreStart
-                catch (\Throwable $throwable)
+                catch (\Throwable)
                 {
                     /** We will not throw an exception */
                 }
@@ -113,7 +101,7 @@ final class DoctrineDBALTransaction implements Transaction
     public function unescapeBinary($payload): string
     {
         /** @var resource|string $payload */
-        if (\is_resource($payload) === true)
+        if (\is_resource($payload))
         {
             $result = \stream_get_contents($payload, -1, 0);
 

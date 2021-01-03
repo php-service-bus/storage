@@ -13,7 +13,6 @@ declare(strict_types = 1);
 namespace ServiceBus\Storage\Sql\DoctrineDBAL;
 
 use function Amp\call;
-use Amp\Failure;
 use Amp\Promise;
 use Amp\Success;
 use Doctrine\DBAL\Connection;
@@ -35,7 +34,7 @@ final class DoctrineDBALAdapter implements DatabaseAdapter
     private $configuration;
 
     /** @var Connection|null */
-    private $connection = null;
+    private $connection;
 
     /** @var LoggerInterface */
     private $logger;
@@ -46,9 +45,6 @@ final class DoctrineDBALAdapter implements DatabaseAdapter
         $this->logger        = $logger ?? new NullLogger();
     }
 
-    /**
-     * @psalm-suppress MixedReturnTypeCoercion
-     */
     public function execute(string $queryString, array $parameters = []): Promise
     {
         $this->logger->debug($queryString, $parameters);
@@ -56,25 +52,13 @@ final class DoctrineDBALAdapter implements DatabaseAdapter
         try
         {
             $statement = $this->connection()->prepare($queryString);
-            $isSuccess = $statement->execute($parameters);
+            $result = $statement->execute($parameters);
 
-            if ($isSuccess === false)
-            {
-                // @codeCoverageIgnoreStart
-                /** @var array{0:string, 1:int, 2:string} $errorInfo */
-                $errorInfo = $this->connection()->errorInfo();
-
-                /** @var string $message Driver-specific error message */
-                $message = $errorInfo[2];
-
-                throw new \RuntimeException($message);
-                // @codeCoverageIgnoreEnd
-            }
-
-            return new Success(new DoctrineDBALResultSet($this->connection(), $statement));
+            return new Success(new DoctrineDBALResultSet($this->connection(), $result));
         }
         catch (\Throwable $throwable)
         {
+            /** @noinspection PhpUnhandledExceptionInspection */
             throw adaptDbalThrowable($throwable);
         }
     }
@@ -123,6 +107,7 @@ final class DoctrineDBALAdapter implements DatabaseAdapter
         // @codeCoverageIgnoreStart
         catch (\Throwable $exception)
         {
+            /** @noinspection PhpUnhandledExceptionInspection */
             throw adaptDbalThrowable($exception);
         }
         // @codeCoverageIgnoreEnd
@@ -131,7 +116,7 @@ final class DoctrineDBALAdapter implements DatabaseAdapter
     public function unescapeBinary($payload): string
     {
         /** @var resource|string $payload */
-        if (\is_resource($payload) === true)
+        if (\is_resource($payload))
         {
             $result = \stream_get_contents($payload, -1, 0);
 

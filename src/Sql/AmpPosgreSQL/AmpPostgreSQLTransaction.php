@@ -43,7 +43,7 @@ final class AmpPostgreSQLTransaction implements Transaction
 
     public function __destruct()
     {
-        if ($this->transaction->isAlive() === true)
+        if ($this->transaction->isAlive())
         {
             $this->transaction->close();
         }
@@ -111,7 +111,7 @@ final class AmpPostgreSQLTransaction implements Transaction
                     yield $this->transaction->rollback();
                 }
                 // @codeCoverageIgnoreStart
-                catch (\Throwable $throwable)
+                catch (\Throwable)
                 {
                     /** We will not throw an exception */
                 }
@@ -126,7 +126,7 @@ final class AmpPostgreSQLTransaction implements Transaction
 
     public function unescapeBinary($payload): string
     {
-        if (\is_resource($payload) === true)
+        if (\is_resource($payload))
         {
             $payload = \stream_get_contents($payload, -1, 0);
         }

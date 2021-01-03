@@ -1,7 +1,7 @@
 <?php
 
 /**
- * SQL databases adapters implementation.
+ * SQL database adapter implementation.
  *
  * @author  Maksim Masiukevich <dev@async-php.com>
  * @license MIT
@@ -108,14 +108,12 @@ function sequence(string $sequenceName, QueryExecutor $executor): Promise
 
             /**
              * @psalm-var array{nextval: string} $result
-             *
-             * @var array $result
              */
             $result = yield fetchOne($resultSet);
 
             unset($resultSet);
 
-            return (string) $result['nextval'];
+            return $result['nextval'];
         }
     );
 }
@@ -125,7 +123,6 @@ function sequence(string $sequenceName, QueryExecutor $executor): Promise
  *
  * @psalm-param    array<mixed, \Latitude\QueryBuilder\CriteriaInterface> $criteria
  * @psalm-param    array<string, string> $orderBy
- * @psalm-suppress MixedTypeCoercion
  *
  * @param \Latitude\QueryBuilder\CriteriaInterface[] $criteria
  *
@@ -144,9 +141,10 @@ function find(QueryExecutor $queryExecutor, string $tableName, array $criteria =
             /**
              * @var string $query
              * @var array  $parameters
-             * @psalm-var array<string, string|int|float|null> $parameters
              */
             [$query, $parameters] = buildQuery(selectQuery($tableName), $criteria, $orderBy, $limit);
+
+            /** @psalm-var array<string, string|int|float|null> $parameters */
 
             return yield $queryExecutor->execute($query, $parameters);
         }
@@ -213,7 +211,7 @@ function buildQuery(
 
     foreach ($criteria as $criteriaItem)
     {
-        $methodName = $isFirstCondition === true ? 'where' : 'andWhere';
+        $methodName = $isFirstCondition ? 'where' : 'andWhere';
         $queryBuilder->{$methodName}($criteriaItem);
         $isFirstCondition = false;
     }
@@ -245,23 +243,19 @@ function buildQuery(
  * @psalm-param  array<string, string|int|null|float>|string $data
  *
  * @psalm-return array<string, string|int|null|float>|string
- *
- * @param array|string $data
- *
- * @return array|string
  */
-function unescapeBinary(QueryExecutor $queryExecutor, $data)
+function unescapeBinary(QueryExecutor $queryExecutor, array|string $data): array|string
 {
     if ($queryExecutor instanceof BinaryDataDecoder)
     {
         if (\is_array($data) === false)
         {
-            return $queryExecutor->unescapeBinary((string) $data);
+            return $queryExecutor->unescapeBinary($data);
         }
 
         foreach ($data as $key => $value)
         {
-            if (empty($value) === false && \is_string($value) === true)
+            if (empty($value) === false && \is_string($value))
             {
                 $data[$key] = $queryExecutor->unescapeBinary($value);
             }
@@ -280,7 +274,7 @@ function unescapeBinary(QueryExecutor $queryExecutor, $data)
  */
 function equalsCriteria(string $field, $value): CriteriaInterface
 {
-    if (\is_object($value) === true)
+    if (\is_object($value))
     {
         $value = castObjectToString($value);
     }
@@ -297,7 +291,7 @@ function equalsCriteria(string $field, $value): CriteriaInterface
  */
 function notEqualsCriteria(string $field, $value): CriteriaInterface
 {
-    if (\is_object($value) === true)
+    if (\is_object($value))
     {
         $value = castObjectToString($value);
     }
@@ -334,7 +328,7 @@ function selectQuery(string $fromTable, string ...$columns): LatitudeQuery\Selec
  */
 function updateQuery(string $tableName, $toUpdate): LatitudeQuery\UpdateQuery
 {
-    $values = \is_object($toUpdate) === true ? castObjectToArray($toUpdate) : $toUpdate;
+    $values = \is_object($toUpdate) ? castObjectToArray($toUpdate) : $toUpdate;
 
     return queryBuilder()->update($tableName, $values);
 }
@@ -358,7 +352,7 @@ function deleteQuery(string $fromTable): LatitudeQuery\DeleteQuery
  */
 function insertQuery(string $toTable, $toInsert): LatitudeQuery\InsertQuery
 {
-    $rows = \is_object($toInsert) === true ? castObjectToArray($toInsert) : $toInsert;
+    $rows = \is_object($toInsert) ? castObjectToArray($toInsert) : $toInsert;
 
     return queryBuilder()->insert($toTable, $rows);
 }
@@ -424,7 +418,7 @@ function toSnakeCase(string $string): string
 {
     $replaced = \preg_replace('/(?<!^)[A-Z]/', '_$0', $string);
 
-    if (\is_string($replaced) === true)
+    if (\is_string($replaced))
     {
         return \strtolower($replaced);
     }
@@ -441,9 +435,9 @@ function toSnakeCase(string $string): string
  *
  * @return float|int|string|null
  */
-function cast($value)
+function cast(float|int|object|string|null $value): float|int|string|null
 {
-    if ($value === null || \is_scalar($value) === true)
+    if ($value === null || \is_scalar($value))
     {
         return $value;
     }
@@ -460,9 +454,8 @@ function cast($value)
  */
 function castObjectToString(object $object): string
 {
-    if (\method_exists($object, '__toString') === true)
+    if (\method_exists($object, '__toString'))
     {
-        /** @psalm-suppress InvalidCast Object have __toString method */
         return (string) $object;
     }
 

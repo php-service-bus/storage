@@ -16,7 +16,6 @@ use Amp\Promise;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use ServiceBus\Storage\Common\DatabaseAdapter;
-use ServiceBus\Storage\Common\QueryExecutor;
 use function Amp\call;
 use function ServiceBus\Common\invokeReflectionMethod;
 use function ServiceBus\Common\readReflectionPropertyValue;

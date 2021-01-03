@@ -37,21 +37,21 @@
     ]
   },
   "require": {
-    "php": ">=7.4",
+    "php": ">=8.0",
     "ext-pgsql": "*",
-    "php-service-bus/common": "v4.1.*",
-    "php-service-bus/cache": "v4.1.*",
+    "php-service-bus/common": "v4.2.*",
+    "php-service-bus/cache": "v4.2.*",
     "amphp/postgres": "v1.3.*",
     "latitude/latitude": "v4.2.*",
     "psr/log": "v1.1.*",
-    "doctrine/dbal": "v2.10.*",
-    "symfony/dependency-injection": "v5.1.*",
+    "doctrine/dbal": "v3.0.*",
+    "symfony/dependency-injection": "v5.2.*",
     "amphp/file": "v1.0.*"
   },
   "require-dev": {
     "php-service-bus/code-style-config": "v1.2.*",
-    "phpunit/phpunit": "v9.2.*",
-    "vimeo/psalm": "v3.13.*",
+    "phpunit/phpunit": "v9.5.*",
+    "vimeo/psalm": "v4.3.*",
     "phpstan/phpstan": "v0.12.*",
     "amphp/amp": "v2.5.*"
   },
@@ -62,8 +62,8 @@
     "phpstan": "./vendor/bin/phpstan analyse src --level 7",
     "tests": "./vendor/bin/phpunit --configuration phpunit.xml --verbose",
     "coverage": "./vendor/bin/phpunit --configuration phpunit.xml --coverage-html ./coverage --verbose",
-    "cs-check": "./vendor/bin/php-cs-fixer fix --allow-risky=yes --dry-run",
-    "cs-fix": "./vendor/bin/php-cs-fixer fix --allow-risky=yes",
+    "cs-check": "PHP_CS_FIXER_IGNORE_ENV=1 ./vendor/bin/php-cs-fixer fix --allow-risky=yes --dry-run",
+    "cs-fix": "PHP_CS_FIXER_IGNORE_ENV=1 ./vendor/bin/php-cs-fixer fix --allow-risky=yes",
     "pre-commit": "PHP_CS_FIXER_IGNORE_ENV=1 ./vendor/bin/php-cs-fixer fix --allow-risky=yes && ./vendor/bin/psalm --config=psalm.xml && ./vendor/bin/phpstan analyse src --level 7 && ./vendor/bin/phpunit --configuration phpunit.xml --verbose"
   },
   "config": {

@@ -57,15 +57,15 @@ final class SqlMigrationLoader
                      */
                     include_once (string) $file;
 
-                    /** @var string $name */
                     $name    = $file->getBasename('.' . $file->getExtension());
-                    $version = (string) \substr($name, 7);
+                    $version = \substr($name, 7);
 
-                    /** @var class-string<Migration> $class */
+                    /** @psalm-var class-string<Migration> $class */
                     $class = \sprintf('\%s', $name);
 
                     $migration = new $class;
 
+                    /** @psalm-suppress RedundantConditionGivenDocblockType */
                     if ($migration instanceof Migration)
                     {
                         $migrations[$version] = $migration;
@@ -96,7 +96,7 @@ final class SqlMigrationLoader
                     \array_map(
                         function (string $fileName): ?\SplFileInfo
                         {
-                            return \strpos($fileName, 'Version') !== false
+                            return \str_contains($fileName, 'Version')
                                 ? new \SplFileInfo($this->directory . '/' . $fileName)
                                 : null;
                         },

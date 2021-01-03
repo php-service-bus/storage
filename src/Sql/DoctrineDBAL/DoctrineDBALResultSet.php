@@ -15,7 +15,8 @@ namespace ServiceBus\Storage\Sql\DoctrineDBAL;
 use Amp\Promise;
 use Amp\Success;
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\Driver\Statement;
+use Doctrine\DBAL\Result;
+use ServiceBus\Storage\Common\Exceptions\ResultSetIterationFailed;
 use ServiceBus\Storage\Common\ResultSet;
 
 /**
@@ -65,14 +66,17 @@ final class DoctrineDBALResultSet implements ResultSet
      */
     private $affectedRows;
 
-    public function __construct(Connection $connection, Statement $wrappedStmt)
+    /**
+     * @throws \Doctrine\DBAL\Exception
+     */
+    public function __construct(Connection $connection, Result $result)
     {
-        $rows = $wrappedStmt->fetchAll();
-
         $this->connection   = $connection;
-        $this->fetchResult  = $rows;
-        $this->affectedRows = $wrappedStmt->rowCount();
+        $this->fetchResult  = $result->fetchAllAssociative();
+        $this->affectedRows = $result->rowCount();
         $this->resultsCount = \count($this->fetchResult);
+
+        $result->free();
     }
 
     public function advance(): Promise
@@ -94,7 +98,7 @@ final class DoctrineDBALResultSet implements ResultSet
             /**
              * @psalm-var array<string, float|int|resource|string|null>|null $row
              *
-             * @var array $row
+             * @var array                                                    $row
              */
             $row = $this->currentRow;
 
@@ -104,11 +108,11 @@ final class DoctrineDBALResultSet implements ResultSet
         /**
          * @psalm-var array<string, float|int|resource|string|null>|null $data
          *
-         * @var array $row
+         * @var array                                                    $row
          */
         $data = $this->fetchResult[$this->currentPosition - 1] ?? null;
 
-        if (\is_array($data) === true && \count($data) === 0)
+        if (\is_array($data) && \count($data) === 0)
         {
             $data = null;
         }
@@ -116,19 +120,18 @@ final class DoctrineDBALResultSet implements ResultSet
         return $this->currentRow = $data;
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @psalm-suppress MixedReturnTypeCoercion
-     */
     public function lastInsertId(?string $sequence = null): Promise
     {
-        return new Success($this->connection->lastInsertId($sequence));
+        try
+        {
+            return new Success($this->connection->lastInsertId($sequence));
+        }
+        catch (\Throwable $throwable)
+        {
+            throw new ResultSetIterationFailed($throwable->getMessage(), (int) $throwable->getCode(), $throwable);
+        }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function affectedRows(): int
     {
         return $this->affectedRows;

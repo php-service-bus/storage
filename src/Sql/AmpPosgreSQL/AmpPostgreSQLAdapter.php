@@ -37,7 +37,7 @@ final class AmpPostgreSQLAdapter implements DatabaseAdapter
     private $configuration;
 
     /** @var Pool|null */
-    private $pool = null;
+    private $pool;
 
     /** @var LoggerInterface|NullLogger */
     private $logger;
@@ -150,7 +150,7 @@ final class AmpPostgreSQLAdapter implements DatabaseAdapter
 
     public function unescapeBinary($payload): string
     {
-        if (\is_resource($payload) === true)
+        if (\is_resource($payload))
         {
             $payload = \stream_get_contents($payload, -1, 0);
         }
