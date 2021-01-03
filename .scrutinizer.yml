@@ -13,7 +13,11 @@ build:
   nodes:
     analysis:
       environment:
-        php: 8.0.0
+        php:
+          version: 8.0.0
+          pecl_extensions:
+            - pdo_pgsql
+
       project_setup:
         override: true
       tests:
