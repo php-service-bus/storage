@@ -10,7 +10,7 @@
   "authors": [
     {
       "name": "Masiukevich Maksim",
-      "email": "dev@async-php.com",
+      "email": "contacts@desperado.dev",
       "homepage": "https://github.com/mmasiukevich",
       "role": "Maintainer"
     }
@@ -49,7 +49,7 @@
     "amphp/file": "v1.0.*"
   },
   "require-dev": {
-    "php-service-bus/code-style-config": "v1.2.*",
+    "php-service-bus/code-style-config": "v1.3.*",
     "phpunit/phpunit": "v9.5.*",
     "vimeo/psalm": "v4.3.*",
     "phpstan/phpstan": "v0.12.*",

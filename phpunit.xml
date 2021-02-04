@@ -6,11 +6,10 @@
          xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd">
     <coverage>
         <include>
-            <directory>./</directory>
+            <directory>./src</directory>
         </include>
         <exclude>
             <directory>./tests</directory>
-            <directory>./vendor</directory>
         </exclude>
     </coverage>
     <php>
@@ -18,7 +17,7 @@
         <env name="TEST_POSTGRES_DSN" value="pgsql://test:123456789@localhost:5432/test"/>
     </php>
     <testsuites>
-        <testsuite name="PHP Service Bus storage component">
+        <testsuite name="Common component">
             <directory>./tests/</directory>
         </testsuite>
     </testsuites>

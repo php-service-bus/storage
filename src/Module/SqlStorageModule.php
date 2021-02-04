@@ -3,12 +3,12 @@
 /**
  * SQL database adapter implementation.
  *
- * @author  Maksim Masiukevich <dev@async-php.com>
+ * @author  Maksim Masiukevich <contacts@desperado.dev>
  * @license MIT
  * @license https://opensource.org/licenses/MIT
  */
 
-declare(strict_types = 1);
+declare(strict_types = 0);
 
 namespace ServiceBus\Storage\Module;
 
@@ -35,10 +35,14 @@ final class SqlStorageModule implements ServiceBusModule
         self::ADAPTER_TYPE_POSTGRES  => AmpPostgreSQLAdapter::class,
     ];
 
-    /** @var string  */
+    /**
+     * @var string
+     */
     private $adapterType;
 
-    /** @var string  */
+    /**
+     * @var string
+     */
     private $connectionDSN;
 
     /**

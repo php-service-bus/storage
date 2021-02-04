@@ -3,12 +3,12 @@
 /**
  * SQL database adapter implementation.
  *
- * @author  Maksim Masiukevich <dev@async-php.com>
+ * @author  Maksim Masiukevich <contacts@desperado.dev>
  * @license MIT
  * @license https://opensource.org/licenses/MIT
  */
 
-declare(strict_types = 1);
+declare(strict_types = 0);
 
 namespace ServiceBus\Storage\Sql;
 
@@ -79,16 +79,16 @@ function fetchOne(ResultSet $iterator): Promise
                 {
                     return $endElement;
                 }
+
+                return null;
             }
-            else
-            {
-                throw new OneResultExpected(
-                    \sprintf(
-                        'A single record was requested, but the result of the query execution contains several ("%d")',
-                        $resultsCount
-                    )
-                );
-            }
+
+            throw new OneResultExpected(
+                \sprintf(
+                    'A single record was requested, but the result of the query execution contains several ("%d")',
+                    $resultsCount
+                )
+            );
         }
     );
 }
@@ -122,9 +122,9 @@ function sequence(string $sequenceName, QueryExecutor $executor): Promise
  * Create & execute SELECT query.
  *
  * @psalm-param    array<mixed, \Latitude\QueryBuilder\CriteriaInterface> $criteria
- * @psalm-param    array<string, string> $orderBy
+ * @psalm-param    array<string, string>                                  $orderBy
  *
- * @param \Latitude\QueryBuilder\CriteriaInterface[] $criteria
+ * @param \Latitude\QueryBuilder\CriteriaInterface[]                      $criteria
  *
  * @return Promise<\ServiceBus\Storage\Common\ResultSet>
  *
@@ -156,7 +156,7 @@ function find(QueryExecutor $queryExecutor, string $tableName, array $criteria =
  *
  * @psalm-param  array<array-key, \Latitude\QueryBuilder\CriteriaInterface> $criteria
  *
- * @param \Latitude\QueryBuilder\CriteriaInterface[] $criteria
+ * @param \Latitude\QueryBuilder\CriteriaInterface[]                        $criteria
  *
  * @return Promise<int>
  *
@@ -172,7 +172,7 @@ function remove(QueryExecutor $queryExecutor, string $tableName, array $criteria
         static function () use ($queryExecutor, $tableName, $criteria): \Generator
         {
             /**
-             * @var string $query
+             * @var string                                        $query
              * @psalm-var array<array-key, string|int|float|null> $parameters
              */
             [$query, $parameters] = buildQuery(deleteQuery($tableName), $criteria);
@@ -194,7 +194,7 @@ function remove(QueryExecutor $queryExecutor, string $tableName, array $criteria
 /**
  * Create query from specified parameters.
  *
- * @psalm-param array<string, string>                                  $orderBy
+ * @psalm-param array<string, string>                $orderBy
  *
  * @param \Latitude\QueryBuilder\CriteriaInterface[] $criteria
  *
@@ -322,7 +322,7 @@ function selectQuery(string $fromTable, string ...$columns): LatitudeQuery\Selec
  *
  * @psalm-param array<string, mixed>|object $toUpdate
  *
- * @param array|object $toUpdate
+ * @param array|object                      $toUpdate
  *
  * @throws \ServiceBus\Storage\Common\Exceptions\IncorrectParameterCast
  */
@@ -346,7 +346,7 @@ function deleteQuery(string $fromTable): LatitudeQuery\DeleteQuery
  *
  * @psalm-param array<string, mixed>|object $toInsert
  *
- * @param array|object $toInsert
+ * @param array|object                      $toInsert
  *
  * @throws \ServiceBus\Storage\Common\Exceptions\IncorrectParameterCast
  */
@@ -402,7 +402,7 @@ function getObjectVars(object $object): array
     /**
      * @psalm-var array<string, float|int|object|string|null> $vars
      *
-     * @var array $vars
+     * @var array                                             $vars
      */
     $vars = $closure();
 

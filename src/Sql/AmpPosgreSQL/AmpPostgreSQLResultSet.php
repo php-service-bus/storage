@@ -3,12 +3,12 @@
 /**
  * SQL databases adapters implementation.
  *
- * @author  Maksim Masiukevich <dev@async-php.com>
+ * @author  Maksim Masiukevich <contacts@desperado.dev>
  * @license MIT
  * @license https://opensource.org/licenses/MIT
  */
 
-declare(strict_types = 1);
+declare(strict_types = 0);
 
 namespace ServiceBus\Storage\Sql\AmpPosgreSQL;
 
@@ -109,7 +109,7 @@ class AmpPostgreSQLResultSet implements ResultSet
                         /** @var array<string, mixed> $result */
                         $result = $this->originalResultSet->getCurrent();
 
-                        if (0 !== \count($result))
+                        if (\count($result) !== 0)
                         {
                             /** @var bool|int|string $value */
                             $value = \reset($result);
@@ -118,10 +118,16 @@ class AmpPostgreSQLResultSet implements ResultSet
                             {
                                 return (string) $value;
                             }
+
+                            throw new \RuntimeException('Empty last insert id result');
                         }
                     }
+
+                    // @codeCoverageIgnoreStart
+                    throw new \RuntimeException(
+                        \sprintf('Unexpected result set type: `%s`', \get_class($this->originalResultSet))
+                    );
                 }
-                // @codeCoverageIgnoreStart
                 catch (\Throwable $throwable)
                 {
                     throw new ResultSetIterationFailed($throwable->getMessage(), (int) $throwable->getCode(), $throwable);

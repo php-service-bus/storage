@@ -3,12 +3,12 @@
 /**
  * SQL database adapter implementation.
  *
- * @author  Maksim Masiukevich <dev@async-php.com>
+ * @author  Maksim Masiukevich <contacts@desperado.dev>
  * @license MIT
  * @license https://opensource.org/licenses/MIT
  */
 
-declare(strict_types = 1);
+declare(strict_types = 0);
 
 namespace ServiceBus\Storage\Common;
 
@@ -16,13 +16,13 @@ use ServiceBus\Storage\Common\Exceptions\InvalidConfigurationOptions;
 
 /**
  * Adapter configuration for storage.
- *
- * @psalm-readonly
  */
 final class StorageConfiguration
 {
     /**
      * Original DSN.
+     *
+     * @psalm-readonly
      *
      * @var string
      */
@@ -31,12 +31,16 @@ final class StorageConfiguration
     /**
      * Scheme.
      *
+     * @psalm-readonly
+     *
      * @var string|null
      */
     public $scheme;
 
     /**
      * Database host.
+     *
+     * @psalm-readonly
      *
      * @var string|null
      */
@@ -45,12 +49,16 @@ final class StorageConfiguration
     /**
      * Database port.
      *
+     * @psalm-readonly
+     *
      * @var int|null
      */
     public $port;
 
     /**
      * Database user.
+     *
+     * @psalm-readonly
      *
      * @var string|null
      */
@@ -59,12 +67,16 @@ final class StorageConfiguration
     /**
      * Database user password.
      *
+     * @psalm-readonly
+     *
      * @var string|null
      */
     public $password;
 
     /**
      * Database name.
+     *
+     * @psalm-readonly
      *
      * @var string|null
      */
@@ -73,12 +85,16 @@ final class StorageConfiguration
     /**
      * Connection encoding.
      *
+     * @psalm-readonly
+     *
      * @var string|null
      */
     public $encoding;
 
     /**
      * All query parameters.
+     *
+     * @psalm-readonly
      *
      * @var array
      */
