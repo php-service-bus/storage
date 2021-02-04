@@ -39,8 +39,8 @@
   "require": {
     "php": ">=8.0",
     "ext-pgsql": "*",
-    "php-service-bus/common": "v4.2.*",
-    "php-service-bus/cache": "v4.2.*",
+    "php-service-bus/common": "v5.0.*",
+    "php-service-bus/cache": "v5.0.*",
     "amphp/postgres": "v1.3.*",
     "latitude/latitude": "v4.2.*",
     "psr/log": "v1.1.*",
