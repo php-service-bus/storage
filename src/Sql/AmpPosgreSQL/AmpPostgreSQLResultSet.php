@@ -118,15 +118,10 @@ class AmpPostgreSQLResultSet implements ResultSet
                             {
                                 return (string) $value;
                             }
-
-                            throw new \RuntimeException('Empty last insert id result');
                         }
                     }
 
-                    // @codeCoverageIgnoreStart
-                    throw new \RuntimeException(
-                        \sprintf('Unexpected result set type: `%s`', \get_class($this->originalResultSet))
-                    );
+                    return null;
                 }
                 catch (\Throwable $throwable)
                 {
