@@ -26,7 +26,7 @@
             <directory>./vendor/php-service-bus/cache/tests/</directory>
         </testsuite>
 
-        <testsuite name="Common component">
+        <testsuite name="Storage component">
             <directory>./tests/</directory>
         </testsuite>
 
