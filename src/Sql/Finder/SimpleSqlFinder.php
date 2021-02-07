@@ -32,7 +32,9 @@ final class SimpleSqlFinder implements SqlFinder
      */
     private $collectionName;
 
-    /** @var DatabaseAdapter */
+    /**
+     * @var DatabaseAdapter
+     */
     private $databaseAdapter;
 
     /**
@@ -47,17 +49,11 @@ final class SimpleSqlFinder implements SqlFinder
         $this->databaseAdapter = $databaseAdapter;
     }
 
-    /**
-     * @inheritDoc
-     */
     public function findOneById($id): Promise
     {
         return $this->findOneBy([equalsCriteria('id', $id)]);
     }
 
-    /**
-     * @inheritDoc
-     */
     public function findOneBy(array $criteria): Promise
     {
         return call(
@@ -79,9 +75,6 @@ final class SimpleSqlFinder implements SqlFinder
         );
     }
 
-    /**
-     * @inheritDoc
-     */
     public function find(array $criteria, ?int $limit = null, array $orderBy = []): Promise
     {
         return call(

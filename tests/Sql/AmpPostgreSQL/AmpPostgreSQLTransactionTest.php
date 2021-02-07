@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection PhpUnhandledExceptionInspection */
 
 /**
  * SQL databases adapters implementation.
@@ -26,18 +26,13 @@ final class AmpPostgreSQLTransactionTest extends BaseTransactionTest
     /**
      * @var AmpPostgreSQLAdapter|null
      */
-    private static $adapter = null;
+    private static $adapter;
 
-    /**
-     * {@inheritdoc}
-     *
-     * @throws \Throwable
-     */
     public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
 
-        $adapter = static::getAdapter();
+        $adapter = self::getAdapter();
 
         wait(
             $adapter->execute(
@@ -46,28 +41,20 @@ final class AmpPostgreSQLTransactionTest extends BaseTransactionTest
         );
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @throws \Throwable
-     */
     public static function tearDownAfterClass(): void
     {
         parent::tearDownAfterClass();
 
-        $adapter = static::getAdapter();
+        $adapter = self::getAdapter();
 
         wait(
             $adapter->execute('DROP TABLE test_result_set')
         );
     }
 
-    /**
-     * @throws \Throwable
-     */
     protected static function getAdapter(): DatabaseAdapter
     {
-        if (false === isset(self::$adapter))
+        if (isset(self::$adapter) === false)
         {
             self::$adapter = postgreSqlAdapterFactory((string) \getenv('TEST_POSTGRES_DSN'));
         }

@@ -17,7 +17,9 @@ namespace ServiceBus\Storage\Sql\Migration;
  */
 abstract class Migration
 {
-    /** @var array */
+    /**
+     * @var array
+     */
     private $queries = [];
 
     /**

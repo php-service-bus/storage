@@ -33,13 +33,19 @@ use ServiceBus\Storage\Common\StorageConfiguration;
  */
 final class AmpPostgreSQLAdapter implements DatabaseAdapter
 {
-    /** @var StorageConfiguration StorageConfiguration */
+    /**
+     * @var StorageConfiguration StorageConfiguration
+     */
     private $configuration;
 
-    /** @var Pool|null */
+    /**
+     * @var Pool|null
+     */
     private $pool;
 
-    /** @var LoggerInterface|NullLogger */
+    /**
+     * @var LoggerInterface|NullLogger
+     */
     private $logger;
 
     /**

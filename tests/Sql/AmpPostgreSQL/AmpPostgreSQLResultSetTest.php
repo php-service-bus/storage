@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection PhpUnhandledExceptionInspection */
 
 /**
  * SQL databases adapters implementation.
@@ -26,14 +26,11 @@ use ServiceBus\Storage\Sql\AmpPosgreSQL\AmpPostgreSQLAdapter;
  */
 final class AmpPostgreSQLResultSetTest extends TestCase
 {
-    /** @var AmpPostgreSQLAdapter|null */
-    private static $adapter = null;
-
     /**
-     * {@inheritdoc}
-     *
-     * @throws \Throwable
+     * @var AmpPostgreSQLAdapter|null
      */
+    private static $adapter;
+
     public static function setUpBeforeClass(): void
     {
         self::$adapter = postgreSqlAdapterFactory((string) \getenv('TEST_POSTGRES_DSN'));
@@ -47,11 +44,6 @@ final class AmpPostgreSQLResultSetTest extends TestCase
         parent::setUpBeforeClass();
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @throws \Throwable
-     */
     public static function tearDownAfterClass(): void
     {
         parent::tearDownAfterClass();
@@ -62,16 +54,11 @@ final class AmpPostgreSQLResultSetTest extends TestCase
                 self::$adapter->execute('DROP TABLE test_result_set')
             );
         }
-        catch (\Throwable $throwable)
+        catch (\Throwable)
         {
         }
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @throws \Throwable
-     */
     protected function tearDown(): void
     {
         parent::tearDown();
@@ -83,8 +70,6 @@ final class AmpPostgreSQLResultSetTest extends TestCase
 
     /**
      * @test
-     *
-     * @throws \Throwable
      */
     public function fetchOne(): void
     {
@@ -108,8 +93,8 @@ final class AmpPostgreSQLResultSetTest extends TestCase
                     )
                 );
 
-                static::assertNotEmpty($result);
-                static:: assertSame(['id' => $uuid2, 'value' => 'value2'], $result);
+                self::assertNotEmpty($result);
+                self:: assertSame(['id' => $uuid2, 'value' => 'value2'], $result);
 
                 $result = yield fetchOne(
                     yield self::$adapter->execute(
@@ -117,15 +102,13 @@ final class AmpPostgreSQLResultSetTest extends TestCase
                     )
                 );
 
-                static::assertNull($result);
+                self::assertNull($result);
             }
         );
     }
 
     /**
      * @test
-     *
-     * @throws \Throwable
      */
     public function fetchAll(): void
     {
@@ -142,16 +125,14 @@ final class AmpPostgreSQLResultSetTest extends TestCase
 
                 $result = yield fetchAll(yield self::$adapter->execute('SELECT * FROM test_result_set'));
 
-                static::assertNotEmpty($result);
-                static::assertCount(2, $result);
+                self::assertNotEmpty($result);
+                self::assertCount(2, $result);
             }
         );
     }
 
     /**
      * @test
-     *
-     * @throws \Throwable
      */
     public function fetchAllWithEmptySet(): void
     {
@@ -160,16 +141,14 @@ final class AmpPostgreSQLResultSetTest extends TestCase
             {
                 $result = yield fetchAll(yield self::$adapter->execute('SELECT * FROM test_result_set'));
 
-                static::assertThat($result, new IsType('array'));
-                static::assertEmpty($result);
+                self::assertThat($result, new IsType('array'));
+                self::assertEmpty($result);
             }
         );
     }
 
     /**
      * @test
-     *
-     * @throws \Throwable
      */
     public function multipleGetCurrentRow(): void
     {
@@ -192,7 +171,7 @@ final class AmpPostgreSQLResultSetTest extends TestCase
                     $row     = $result->getCurrent();
                     $rowCopy = $result->getCurrent();
 
-                    static::assertSame($row, $rowCopy);
+                    self::assertSame($row, $rowCopy);
                 }
             }
         );
@@ -200,8 +179,6 @@ final class AmpPostgreSQLResultSetTest extends TestCase
 
     /**
      * @test
-     *
-     * @throws \Throwable
      */
     public function executeCommand(): void
     {
@@ -213,10 +190,10 @@ final class AmpPostgreSQLResultSetTest extends TestCase
 
                 while (yield $result->advance())
                 {
-                    static::fail('Non empty cycle');
+                    self::fail('Non empty cycle');
                 }
 
-                static::assertNull(yield $result->lastInsertId());
+                self::assertNull(yield $result->lastInsertId());
             }
         );
     }

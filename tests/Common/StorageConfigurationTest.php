@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection PhpUnhandledExceptionInspection */
 
 /**
  * Common storage parts.
@@ -20,45 +20,51 @@ use ServiceBus\Storage\Common\StorageConfiguration;
  */
 final class StorageConfigurationTest extends TestCase
 {
-    /** @test */
+    /**
+     * @test
+     */
     public function parseSqlite(): void
     {
         $configuration = new StorageConfiguration('sqlite:///:memory:');
 
-        static::assertSame('sqlite:///:memory:', $configuration->originalDSN);
-        static::assertSame('sqlite', $configuration->scheme);
-        static::assertSame('localhost', $configuration->host);
-        static::assertSame(':memory:', $configuration->databaseName);
-        static::assertSame('UTF-8', $configuration->encoding);
+        self::assertSame('sqlite:///:memory:', $configuration->originalDSN);
+        self::assertSame('sqlite', $configuration->scheme);
+        self::assertSame('localhost', $configuration->host);
+        self::assertSame(':memory:', $configuration->databaseName);
+        self::assertSame('UTF-8', $configuration->encoding);
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function parseFullDSN(): void
     {
         $configuration = new StorageConfiguration(
             'pgsql://someUser:someUserPassword@host:54332/databaseName?charset=UTF-16'
         );
 
-        static::assertSame('pgsql', $configuration->scheme);
-        static::assertSame('host', $configuration->host);
-        static::assertSame(54332, $configuration->port);
-        static::assertSame('databaseName', $configuration->databaseName);
-        static::assertSame('UTF-16', $configuration->encoding);
-        static::assertSame('someUser', $configuration->username);
-        static::assertSame('someUserPassword', $configuration->password);
+        self::assertSame('pgsql', $configuration->scheme);
+        self::assertSame('host', $configuration->host);
+        self::assertSame(54332, $configuration->port);
+        self::assertSame('databaseName', $configuration->databaseName);
+        self::assertSame('UTF-16', $configuration->encoding);
+        self::assertSame('someUser', $configuration->username);
+        self::assertSame('someUserPassword', $configuration->password);
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function parseWithoutPassword(): void
     {
         $configuration = new StorageConfiguration('pgsql://username:@localhost:5432/databaseName');
 
-        static::assertSame('pgsql', $configuration->scheme);
-        static::assertSame('localhost', $configuration->host);
-        static::assertSame(5432, $configuration->port);
-        static::assertSame('databaseName', $configuration->databaseName);
-        static::assertSame('UTF-8', $configuration->encoding);
-        static::assertSame('username', $configuration->username);
-        static::assertNull($configuration->password);
+        self::assertSame('pgsql', $configuration->scheme);
+        self::assertSame('localhost', $configuration->host);
+        self::assertSame(5432, $configuration->port);
+        self::assertSame('databaseName', $configuration->databaseName);
+        self::assertSame('UTF-8', $configuration->encoding);
+        self::assertSame('username', $configuration->username);
+        self::assertNull($configuration->password);
     }
 }

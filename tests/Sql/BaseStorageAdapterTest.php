@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection PhpUnhandledExceptionInspection */
 
 /**
  * SQL databases adapters implementation.
@@ -37,11 +37,6 @@ abstract class BaseStorageAdapterTest extends TestCase
      */
     abstract protected static function getAdapter(): DatabaseAdapter;
 
-    /**
-     * {@inheritdoc}
-     *
-     * @throws \Throwable
-     */
     public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
@@ -55,11 +50,6 @@ abstract class BaseStorageAdapterTest extends TestCase
         );
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @throws \Throwable
-     */
     protected function tearDown(): void
     {
         parent::tearDown();
@@ -71,8 +61,6 @@ abstract class BaseStorageAdapterTest extends TestCase
 
     /**
      * @test
-     *
-     * @throws \Throwable
      */
     public function unescapeBinary(): void
     {
@@ -108,8 +96,6 @@ abstract class BaseStorageAdapterTest extends TestCase
 
     /**
      * @test
-     *
-     * @throws \Throwable
      */
     public function resultSet(): void
     {
@@ -145,8 +131,6 @@ abstract class BaseStorageAdapterTest extends TestCase
 
     /**
      * @test
-     *
-     * @throws \Throwable
      */
     public function emptyResultSet(): void
     {
@@ -165,8 +149,6 @@ abstract class BaseStorageAdapterTest extends TestCase
 
     /**
      * @test
-     *
-     * @throws \Throwable
      */
     public function failedQuery(): void
     {
@@ -182,8 +164,6 @@ abstract class BaseStorageAdapterTest extends TestCase
 
     /**
      * @test
-     *
-     * @throws \Throwable
      */
     public function findOne(): void
     {
@@ -210,8 +190,6 @@ abstract class BaseStorageAdapterTest extends TestCase
 
     /**
      * @test
-     *
-     * @throws \Throwable
      */
     public function findOneWhenEmptySet(): void
     {
@@ -235,8 +213,6 @@ abstract class BaseStorageAdapterTest extends TestCase
 
     /**
      * @test
-     *
-     * @throws \Throwable
      */
     public function findOneWhenWrongSet(): void
     {
@@ -260,8 +236,6 @@ abstract class BaseStorageAdapterTest extends TestCase
 
     /**
      * @test
-     *
-     * @throws \Throwable
      */
     public function uniqueKeyCheckFailed(): void
     {
@@ -285,8 +259,6 @@ abstract class BaseStorageAdapterTest extends TestCase
 
     /**
      * @test
-     *
-     * @throws \Throwable
      */
     public function rowsCount(): void
     {
@@ -330,11 +302,6 @@ abstract class BaseStorageAdapterTest extends TestCase
         );
     }
 
-    /**
-     * @param DatabaseAdapter $adapter
-     *
-     * @throws \Throwable
-     */
     private static function importFixtures(DatabaseAdapter $adapter): Promise
     {
         return $adapter->execute(

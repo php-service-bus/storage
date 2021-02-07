@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection PhpUnhandledExceptionInspection */
 
 /**
  * SQL databases adapters implementation.
@@ -30,8 +30,6 @@ final class QueryBuilderFunctionsTest extends TestCase
 {
     /**
      * @test
-     *
-     * @throws \Throwable
      */
     public function buildQuery(): void
     {
@@ -42,22 +40,20 @@ final class QueryBuilderFunctionsTest extends TestCase
             100
         );
 
-        static::assertCount(2, $parts);
-        static::assertArrayHasKey(0, $parts);
-        static::assertArrayHasKey(1, $parts);
+        self::assertCount(2, $parts);
+        self::assertArrayHasKey(0, $parts);
+        self::assertArrayHasKey(1, $parts);
 
-        static::assertSame(
+        self::assertSame(
             'SELECT * FROM "table_name" WHERE "id" = ? AND "id" != ? ORDER BY "title" DESC LIMIT 100',
             $parts[0]
         );
 
-        static::assertSame([100, 200], $parts[1]);
+        self::assertSame([100, 200], $parts[1]);
     }
 
     /**
      * @test
-     *
-     * @throws \Throwable
      */
     public function selectQuery(): void
     {
@@ -65,18 +61,16 @@ final class QueryBuilderFunctionsTest extends TestCase
             ->where(equalsCriteria('id', '100500'))
             ->compile();
 
-        static::assertSame(
+        self::assertSame(
             'SELECT "id", "value" FROM "test" WHERE "id" = ?',
             $query->sql()
         );
 
-        static::assertSame(['100500'], $query->params());
+        self::assertSame(['100500'], $query->params());
     }
 
     /**
      * @test
-     *
-     * @throws \Throwable
      */
     public function updateQuery(): void
     {
@@ -84,31 +78,27 @@ final class QueryBuilderFunctionsTest extends TestCase
             ->where(equalsCriteria('id', '100500'))
             ->compile();
 
-        static::assertSame(
+        self::assertSame(
             'UPDATE "test" SET "name" = ?, "email" = ? WHERE "id" = ?',
             $query->sql()
         );
 
-        static::assertSame(['newName', 'newEmail', '100500'], $query->params());
+        self::assertSame(['newName', 'newEmail', '100500'], $query->params());
     }
 
     /**
      * @test
-     *
-     * @throws \Throwable
      */
     public function deleteQuery(): void
     {
         $query = deleteQuery('test')->compile();
 
-        static::assertSame('DELETE FROM "test"', $query->sql());
-        static::assertEmpty($query->params());
+        self::assertSame('DELETE FROM "test"', $query->sql());
+        self::assertEmpty($query->params());
     }
 
     /**
      * @test
-     *
-     * @throws \Throwable
      */
     public function insertQueryFromObject(): void
     {
@@ -133,39 +123,35 @@ final class QueryBuilderFunctionsTest extends TestCase
 
         $query = insertQuery('test', $object)->compile();
 
-        static::assertSame(
+        self::assertSame(
             'INSERT INTO "test" ("first", "second") VALUES (?, ?)',
             $query->sql()
         );
 
-        static::assertSame(['qwerty', 'root'], $query->params());
+        self::assertSame(['qwerty', 'root'], $query->params());
     }
 
     /**
      * @test
-     *
-     * @throws \Throwable
      */
     public function insertQueryFromArray(): void
     {
         $query = insertQuery('test', ['first' => 'qwerty', 'second' => 'root'])->compile();
 
-        static::assertSame(
+        self::assertSame(
             'INSERT INTO "test" ("first", "second") VALUES (?, ?)',
             $query->sql()
         );
 
-        static::assertSame(['qwerty', 'root'], $query->params());
+        self::assertSame(['qwerty', 'root'], $query->params());
     }
 
     /**
      * @test
-     *
-     * @throws \Throwable
      */
     public function toSnakeCase(): void
     {
-        static::assertSame(
+        self::assertSame(
             'some_snake_case',
             toSnakeCase('someSnakeCase')
         );
@@ -173,8 +159,6 @@ final class QueryBuilderFunctionsTest extends TestCase
 
     /**
      * @test
-     *
-     * @throws \Throwable
      */
     public function castObjectWithoutToString(): void
     {
@@ -190,8 +174,6 @@ final class QueryBuilderFunctionsTest extends TestCase
 
     /**
      * @test
-     *
-     * @throws \Throwable
      */
     public function castObjectWithToString(): void
     {
@@ -203,13 +185,11 @@ final class QueryBuilderFunctionsTest extends TestCase
             }
         };
 
-        static::assertSame('qwerty', cast($object));
+        self::assertSame('qwerty', cast($object));
     }
 
     /**
      * @test
-     *
-     * @throws \Throwable
      */
     public function objectNotEqualsCriteria(): void
     {
@@ -231,14 +211,12 @@ final class QueryBuilderFunctionsTest extends TestCase
 
         $query = selectQuery('test')->where(notEqualsCriteria('id', $object))->compile();
 
-        static::assertSame('SELECT * FROM "test" WHERE "id" != ?', $query->sql());
-        static::assertSame([(string) $object], $query->params());
+        self::assertSame('SELECT * FROM "test" WHERE "id" != ?', $query->sql());
+        self::assertSame([(string) $object], $query->params());
     }
 
     /**
      * @test
-     *
-     * @throws \Throwable
      */
     public function scalarNotEqualsCriteria(): void
     {
@@ -246,7 +224,7 @@ final class QueryBuilderFunctionsTest extends TestCase
 
         $query = selectQuery('test')->where(notEqualsCriteria('id', $id))->compile();
 
-        static::assertSame('SELECT * FROM "test" WHERE "id" != ?', $query->sql());
-        static::assertSame([$id], $query->params());
+        self::assertSame('SELECT * FROM "test" WHERE "id" != ?', $query->sql());
+        self::assertSame([$id], $query->params());
     }
 }

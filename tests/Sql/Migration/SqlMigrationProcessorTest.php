@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection PhpUnhandledExceptionInspection */
 
 /**
  * SQL databases adapters implementation.
@@ -45,15 +45,19 @@ final class SqlMigrationProcessorTest extends TestCase
         );
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function up(): void
     {
-        static::assertSame(2, wait($this->migrationProcessor->up()));
+        self::assertSame(2, wait($this->migrationProcessor->up()));
     }
 
-    /** @test */
+    /**
+     * @test
+     */
     public function down(): void
     {
-        static::assertSame(1, wait($this->migrationProcessor->down()));
+        self::assertSame(1, wait($this->migrationProcessor->down()));
     }
 }

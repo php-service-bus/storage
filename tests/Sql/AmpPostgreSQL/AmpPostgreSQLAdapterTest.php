@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection PhpUnhandledExceptionInspection */
 
 /**
  * SQL databases adapters implementation.
@@ -26,60 +26,48 @@ use ServiceBus\Storage\Tests\Sql\BaseStorageAdapterTest;
  */
 final class AmpPostgreSQLAdapterTest extends BaseStorageAdapterTest
 {
-    /** @var AmpPostgreSQLAdapter|null */
-    private static $adapter = null;
+    /**
+     * @var AmpPostgreSQLAdapter|null
+     */
+    private static $adapter;
 
     public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
 
         wait(
-            static::getAdapter()->execute(
+            self::getAdapter()->execute(
                 'CREATE TABLE IF NOT EXISTS test_ai (id serial PRIMARY KEY, value VARCHAR)'
             )
         );
     }
 
-    /**
-     * @throws \Throwable
-     *
-     */
     public static function tearDownAfterClass(): void
     {
-        $adapter = static::getAdapter();
+        $adapter = self::getAdapter();
 
         try
         {
             wait($adapter->execute('DROP TABLE storage_test_table'));
             wait($adapter->execute('DROP TABLE test_ai'));
         }
-        catch (\Throwable $throwable)
+        catch (\Throwable)
         {
         }
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @throws \Throwable
-     */
     protected function tearDown(): void
     {
-        $adapter = static::getAdapter();
+        $adapter = self::getAdapter();
 
         wait($adapter->execute('TRUNCATE TABLE test_ai'));
 
         parent::tearDown();
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @throws \Throwable
-     */
     protected static function getAdapter(): DatabaseAdapter
     {
-        if (false === isset(self::$adapter))
+        if (isset(self::$adapter) === false)
         {
             self::$adapter = postgreSqlAdapterFactory((string) \getenv('TEST_POSTGRES_DSN'));
         }
@@ -89,33 +77,29 @@ final class AmpPostgreSQLAdapterTest extends BaseStorageAdapterTest
 
     /**
      * @test
-     *
-     * @throws \Throwable
      */
     public function lastInsertId(): void
     {
         Loop::run(
             static function (): \Generator
             {
-                $adapter = static::getAdapter();
+                $adapter = self::getAdapter();
 
                 /** @var \ServiceBus\Storage\Common\ResultSet $result */
                 $result = yield $adapter->execute('INSERT INTO test_ai (value) VALUES (\'qwerty\') RETURNING id');
 
-                static::assertSame('1', yield $result->lastInsertId());
+                self::assertSame('1', yield $result->lastInsertId());
 
                 /** @var \ServiceBus\Storage\Common\ResultSet $result */
                 $result = yield $adapter->execute('INSERT INTO test_ai (value) VALUES (\'qwerty\') RETURNING id');
 
-                static::assertSame('2', yield $result->lastInsertId());
+                self::assertSame('2', yield $result->lastInsertId());
             }
         );
     }
 
     /**
      * @test
-     *
-     * @throws \Throwable
      */
     public function failedConnection(): void
     {

@@ -35,10 +35,14 @@ final class CachedSqlFinder implements SqlFinder
      */
     private $collectionName;
 
-    /** @var DatabaseAdapter */
+    /**
+     * @var DatabaseAdapter
+     */
     private $databaseAdapter;
 
-    /** @var CacheAdapter */
+    /**
+     * @var CacheAdapter
+     */
     private $cacheAdapter;
 
     public function __construct(string $collectionName, DatabaseAdapter $databaseAdapter, ?CacheAdapter $cacheAdapter = null)
@@ -48,17 +52,11 @@ final class CachedSqlFinder implements SqlFinder
         $this->cacheAdapter    = $cacheAdapter ?? new InMemoryCacheAdapter();
     }
 
-    /**
-     * @inheritDoc
-     */
     public function findOneById($id): Promise
     {
         return $this->findOneBy([equalsCriteria('id', $id)]);
     }
 
-    /**
-     * @inheritDoc
-     */
     public function findOneBy(array $criteria): Promise
     {
         return call(
@@ -98,9 +96,6 @@ final class CachedSqlFinder implements SqlFinder
         );
     }
 
-    /**
-     * @inheritDoc
-     */
     public function find(array $criteria, ?int $limit = null, array $orderBy = []): Promise
     {
         return call(

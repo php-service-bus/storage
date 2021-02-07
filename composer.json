@@ -28,7 +28,9 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "ServiceBus\\Storage\\Tests\\": "tests/"
+      "ServiceBus\\Storage\\Tests\\": "tests/",
+      "ServiceBus\\Cache\\Tests\\": "vendor/php-service-bus/cache/tests/",
+      "ServiceBus\\Common\\Tests\\": "vendor/php-service-bus/common/tests/"
     },
     "files": [
       "src/Sql/functions.php",

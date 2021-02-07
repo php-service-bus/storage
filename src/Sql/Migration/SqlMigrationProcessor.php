@@ -33,10 +33,14 @@ final class SqlMigrationProcessor
      */
     private $storage;
 
-    /** @var SqlMigrationLoader */
+    /**
+     * @var SqlMigrationLoader
+     */
     private $migrationsLoader;
 
-    /** @var LoggerInterface */
+    /**
+     * @var LoggerInterface
+     */
     private $logger;
 
     public function __construct(DatabaseAdapter $storage, SqlMigrationLoader $migrationsLoader, ?LoggerInterface $logger = null)

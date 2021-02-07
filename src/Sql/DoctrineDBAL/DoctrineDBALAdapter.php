@@ -30,13 +30,19 @@ use ServiceBus\Storage\Common\StorageConfiguration;
  */
 final class DoctrineDBALAdapter implements DatabaseAdapter
 {
-    /** @var StorageConfiguration StorageConfiguration */
+    /**
+     * @var StorageConfiguration StorageConfiguration
+     */
     private $configuration;
 
-    /** @var Connection|null */
+    /**
+     * @var Connection|null
+     */
     private $connection;
 
-    /** @var LoggerInterface */
+    /**
+     * @var LoggerInterface
+     */
     private $logger;
 
     public function __construct(StorageConfiguration $configuration, LoggerInterface $logger = null)

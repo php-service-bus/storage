@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection PhpUnhandledExceptionInspection */
 
 /**
  * SQL databases adapters implementation.
@@ -27,12 +27,11 @@ use ServiceBus\Storage\Tests\Sql\BaseStorageAdapterTest;
  */
 final class DoctrineDBALAdapterTest extends BaseStorageAdapterTest
 {
-    /** @var DoctrineDBALAdapter|null */
-    private static $adapter = null;
-
     /**
-     * {@inheritdoc}
+     * @var DoctrineDBALAdapter|null
      */
+    private static $adapter ;
+
     protected static function getAdapter(): DatabaseAdapter
     {
         if (false === isset(self::$adapter))
@@ -43,17 +42,12 @@ final class DoctrineDBALAdapterTest extends BaseStorageAdapterTest
         return self::$adapter;
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @throws \Throwable
-     */
     protected function setUp(): void
     {
         parent::setUp();
 
         wait(
-            static::getAdapter()->execute(
+            self::getAdapter()->execute(
                 'CREATE TABLE IF NOT EXISTS test_ai (id serial PRIMARY KEY, value VARCHAR)'
             )
         );
@@ -61,33 +55,29 @@ final class DoctrineDBALAdapterTest extends BaseStorageAdapterTest
 
     /**
      * @test
-     *
-     * @throws \Throwable
      */
     public function lastInsertId(): void
     {
         Loop::run(
             static function (): \Generator
             {
-                $adapter = static::getAdapter();
+                $adapter = self::getAdapter();
 
                 /** @var \ServiceBus\Storage\Common\ResultSet $result */
                 $result = yield $adapter->execute('INSERT INTO test_ai (value) VALUES (\'qwerty\')');
 
-                static::assertSame('1', yield $result->lastInsertId());
+                self::assertSame('1', yield $result->lastInsertId());
 
                 /** @var \ServiceBus\Storage\Common\ResultSet $result */
                 $result = yield $adapter->execute('INSERT INTO test_ai (value) VALUES (\'qwerty\')');
 
-                static::assertSame('2', yield $result->lastInsertId());
+                self::assertSame('2', yield $result->lastInsertId());
             }
         );
     }
 
     /**
      * @test
-     *
-     * @throws \Throwable
      */
     public function failedConnection(): void
     {
@@ -107,8 +97,6 @@ final class DoctrineDBALAdapterTest extends BaseStorageAdapterTest
 
     /**
      * @test
-     *
-     * @throws \Throwable
      */
     public function failedConnectionString(): void
     {

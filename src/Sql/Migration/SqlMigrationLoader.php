@@ -21,7 +21,9 @@ use function Amp\File\scandir;
  */
 final class SqlMigrationLoader
 {
-    /** @var string */
+    /**
+     * @var string
+     */
     private $directory;
 
     /**

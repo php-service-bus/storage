@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection PhpUnhandledExceptionInspection */
 
 /**
  * SQL databases adapters implementation.
@@ -21,11 +21,13 @@ use function Amp\Promise\wait;
  */
 final class SqlMigrationLoaderTest extends TestCase
 {
-    /** @test */
+    /**
+     * @test
+     */
     public function load(): void
     {
         $loader = new SqlMigrationLoader(__DIR__ . '/stubs');
 
-        static::assertCount(2, wait($loader->load()));
+        self::assertCount(2, wait($loader->load()));
     }
 }

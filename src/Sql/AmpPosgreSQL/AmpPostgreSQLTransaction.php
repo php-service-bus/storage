@@ -29,10 +29,14 @@ use ServiceBus\Storage\Common\Transaction;
  */
 final class AmpPostgreSQLTransaction implements Transaction
 {
-    /** @var AmpTransaction */
+    /**
+     * @var AmpTransaction
+     */
     private $transaction;
 
-    /** @var LoggerInterface */
+    /**
+     * @var LoggerInterface
+     */
     private $logger;
 
     public function __construct(AmpTransaction $transaction, LoggerInterface $logger)

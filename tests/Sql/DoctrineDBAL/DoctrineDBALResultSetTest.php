@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection PhpUnhandledExceptionInspection */
 
 /**
  * SQL databases adapters implementation.
@@ -26,14 +26,11 @@ use ServiceBus\Storage\Sql\DoctrineDBAL\DoctrineDBALAdapter;
  */
 final class DoctrineDBALResultSetTest extends TestCase
 {
-    /** @var DoctrineDBALAdapter */
+    /**
+     * @var DoctrineDBALAdapter
+     */
     private $adapter;
 
-    /**
-     * {@inheritdoc}
-     *
-     * @throws \Throwable
-     */
     protected function setUp(): void
     {
         parent::setUp();
@@ -47,11 +44,6 @@ final class DoctrineDBALResultSetTest extends TestCase
         );
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @throws \Throwable
-     */
     protected function tearDown(): void
     {
         parent::tearDown();
@@ -63,8 +55,6 @@ final class DoctrineDBALResultSetTest extends TestCase
 
     /**
      * @test
-     *
-     * @throws \Throwable
      */
     public function fetchOne(): void
     {
@@ -83,22 +73,20 @@ final class DoctrineDBALResultSetTest extends TestCase
                     yield  $this->adapter->execute('SELECT * FROM test_result_set WHERE id = \'uuid2\'')
                 );
 
-                static::assertNotEmpty($result);
-                static:: assertSame(['id' => 'uuid2', 'value' => 'value2'], $result);
+                self::assertNotEmpty($result);
+                self:: assertSame(['id' => 'uuid2', 'value' => 'value2'], $result);
 
                 $result = yield fetchOne(
                     yield $this->adapter->execute('SELECT * FROM test_result_set WHERE id = \'uuid4\'')
                 );
 
-                static::assertNull($result);
+                self::assertNull($result);
             }
         );
     }
 
     /**
      * @test
-     *
-     * @throws \Throwable
      */
     public function fetchAll(): void
     {
@@ -115,16 +103,14 @@ final class DoctrineDBALResultSetTest extends TestCase
 
                 $result = yield fetchAll(yield $this->adapter->execute('SELECT * FROM test_result_set'));
 
-                static::assertNotEmpty($result);
-                static::assertCount(2, $result);
+                self::assertNotEmpty($result);
+                self::assertCount(2, $result);
             }
         );
     }
 
     /**
      * @test
-     *
-     * @throws \Throwable
      */
     public function fetchAllWithEmptySet(): void
     {
@@ -133,16 +119,14 @@ final class DoctrineDBALResultSetTest extends TestCase
             {
                 $result = yield fetchAll(yield $this->adapter->execute('SELECT * FROM test_result_set'));
 
-                static::assertThat($result, new IsType('array'));
-                static::assertEmpty($result);
+                self::assertThat($result, new IsType('array'));
+                self::assertEmpty($result);
             }
         );
     }
 
     /**
      * @test
-     *
-     * @throws \Throwable
      */
     public function multipleGetCurrentRow(): void
     {
@@ -165,7 +149,7 @@ final class DoctrineDBALResultSetTest extends TestCase
                     $row     = $result->getCurrent();
                     $rowCopy = $result->getCurrent();
 
-                    static::assertSame($row, $rowCopy);
+                    self::assertSame($row, $rowCopy);
                 }
             }
         );

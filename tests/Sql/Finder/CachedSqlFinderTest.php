@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection PhpUnhandledExceptionInspection */
 
 /**
  * SQL adapters support module.
@@ -31,14 +31,6 @@ final class CachedSqlFinderTest extends TestCase
      */
     private static $adapter;
 
-    /**
-     * {@inheritdoc}
-     *
-     * @throws \Throwable
-     *
-     * @return void
-     *
-     */
     public static function setUpBeforeClass(): void
     {
         self::$adapter = inMemoryAdapter();
@@ -48,14 +40,6 @@ final class CachedSqlFinderTest extends TestCase
         parent::setUpBeforeClass();
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @throws \Throwable
-     *
-     * @return void
-     *
-     */
     public static function tearDownAfterClass(): void
     {
         self::$adapter = null;
@@ -66,11 +50,6 @@ final class CachedSqlFinderTest extends TestCase
         parent::tearDownAfterClass();
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @throws \Throwable
-     */
     protected function tearDown(): void
     {
         parent::tearDown();
@@ -83,8 +62,6 @@ final class CachedSqlFinderTest extends TestCase
 
     /**
      * @test
-     *
-     * @throws \Throwable
      */
     public function selectOne(): void
     {
@@ -103,33 +80,31 @@ final class CachedSqlFinderTest extends TestCase
                 /** @var array $entry */
                 $entry = yield $finder->findOneById('28a3e51c-4944-44a7-bb79-b00fe38d9f0c');
 
-                static::assertArrayHasKey('id', $entry);
-                static::assertArrayHasKey('title', $entry);
+                self::assertArrayHasKey('id', $entry);
+                self::assertArrayHasKey('title', $entry);
 
-                static::assertSame('28a3e51c-4944-44a7-bb79-b00fe38d9f0c', $entry['id']);
+                self::assertSame('28a3e51c-4944-44a7-bb79-b00fe38d9f0c', $entry['id']);
 
-                /** Закешированное */
+                /** Cached */
 
                 /** @noinspection PhpInternalEntityUsedInspection */
-                static::assertTrue(
+                self::assertTrue(
                     InMemoryStorage::instance()->has('6e1488a47d01310e8697f3e980935b2d4d2c8df3')
                 );
 
                 /** @var array $entry */
                 $entry = yield $finder->findOneById('28a3e51c-4944-44a7-bb79-b00fe38d9f0c');
 
-                static::assertArrayHasKey('id', $entry);
-                static::assertArrayHasKey('title', $entry);
+                self::assertArrayHasKey('id', $entry);
+                self::assertArrayHasKey('title', $entry);
 
-                static::assertSame('28a3e51c-4944-44a7-bb79-b00fe38d9f0c', $entry['id']);
+                self::assertSame('28a3e51c-4944-44a7-bb79-b00fe38d9f0c', $entry['id']);
             }
         );
     }
 
     /**
      * @test
-     *
-     * @throws \Throwable
      */
     public function selectAll(): void
     {
@@ -146,19 +121,19 @@ final class CachedSqlFinderTest extends TestCase
                 /** @var array $rows */
                 $rows = yield $finder->find([], 100, ['id' => 'DESC']);
 
-                static::assertCount(2, $rows);
+                self::assertCount(2, $rows);
 
-                /** Закешированное */
+                /** Cached */
 
                 /** @noinspection PhpInternalEntityUsedInspection */
-                static::assertTrue(
+                self::assertTrue(
                     InMemoryStorage::instance()->has('5c2a559f629ec7eb8cc42876c6fec726b3ab82f2')
                 );
 
                 /** @var array $rows */
                 $rows = yield $finder->find([], 100, ['id' => 'DESC']);
 
-                static::assertCount(2, $rows);
+                self::assertCount(2, $rows);
             }
         );
     }

@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection PhpUnhandledExceptionInspection */
 
 /**
  * SQL databases adapters implementation.
@@ -31,11 +31,6 @@ use ServiceBus\Storage\Common\Transaction;
  */
 abstract class BaseTransactionTest extends TestCase
 {
-    /**
-     * {@inheritdoc}
-     *
-     * @throws \Throwable
-     */
     protected function tearDown(): void
     {
         parent::tearDown();
@@ -54,8 +49,6 @@ abstract class BaseTransactionTest extends TestCase
 
     /**
      * @test
-     *
-     * @throws \Throwable
      */
     public function simpleTransaction(): void
     {
@@ -89,8 +82,6 @@ abstract class BaseTransactionTest extends TestCase
 
     /**
      * @test
-     *
-     * @throws \Throwable
      */
     public function successTransactional(): void
     {
@@ -122,8 +113,6 @@ abstract class BaseTransactionTest extends TestCase
 
     /**
      * @test
-     *
-     * @throws \Throwable
      */
     public function transactionWithReadData(): void
     {
@@ -157,8 +146,6 @@ abstract class BaseTransactionTest extends TestCase
 
     /**
      * @test
-     *
-     * @throws \Throwable
      */
     public function rollback(): void
     {
@@ -191,8 +178,6 @@ abstract class BaseTransactionTest extends TestCase
 
     /**
      * @test
-     *
-     * @throws \Throwable
      */
     public function transactionalWithDuplicate(): void
     {

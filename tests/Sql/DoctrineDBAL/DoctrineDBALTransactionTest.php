@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection PhpUnhandledExceptionInspection */
 
 /**
  * SQL databases adapters implementation.
@@ -23,19 +23,16 @@ use ServiceBus\Storage\Tests\Sql\BaseTransactionTest;
  */
 final class DoctrineDBALTransactionTest extends BaseTransactionTest
 {
-    /** @var DoctrineDBALAdapter|null */
-    private static $adapter = null;
-
     /**
-     * {@inheritdoc}
-     *
-     * @throws \Throwable
+     * @var DoctrineDBALAdapter|null
      */
+    private static $adapter;
+
     public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
 
-        $adapter = static::getAdapter();
+        $adapter = self::getAdapter();
 
         wait(
             $adapter->execute(
@@ -44,28 +41,20 @@ final class DoctrineDBALTransactionTest extends BaseTransactionTest
         );
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @throws \Throwable
-     */
     public static function tearDownAfterClass(): void
     {
         parent::tearDownAfterClass();
 
-        $adapter = static::getAdapter();
+        $adapter = self::getAdapter();
 
         wait(
             $adapter->execute('DROP TABLE test_result_set')
         );
     }
 
-    /**
-     * @return DatabaseAdapter
-     */
     protected static function getAdapter(): DatabaseAdapter
     {
-        if (false === isset(self::$adapter))
+        if (isset(self::$adapter) === false)
         {
             self::$adapter = inMemoryAdapter();
         }
