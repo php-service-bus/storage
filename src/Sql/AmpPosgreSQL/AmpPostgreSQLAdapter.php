@@ -12,10 +12,9 @@ declare(strict_types = 0);
 
 namespace ServiceBus\Storage\Sql\AmpPosgreSQL;
 
-use Amp\Postgres\PgSqlCommandResult;
+use Amp\Iterator;
 use Amp\Postgres\PooledResultSet;
-use Amp\Postgres\PqCommandResult;
-use Amp\Sql\ResultSet as AmpResultSet;
+use Amp\Sql\CommandResult;
 use function Amp\call;
 use function Amp\Postgres\pool;
 use Amp\Coroutine;
@@ -81,7 +80,7 @@ final class AmpPostgreSQLAdapter implements DatabaseAdapter
                 {
                     $this->logger->debug($queryString, $parameters);
 
-                    /** @var AmpResultSet|PgSqlCommandResult|PooledResultSet|PqCommandResult $resultSet */
+                    /** @var Iterator|CommandResult|PooledResultSet $resultSet */
                     $resultSet = yield $this->pool()->execute($queryString, $parameters);
 
                     return new AmpPostgreSQLResultSet($resultSet);

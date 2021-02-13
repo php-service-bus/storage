@@ -12,12 +12,13 @@ declare(strict_types = 0);
 
 namespace ServiceBus\Storage\Sql\AmpPosgreSQL;
 
+use Amp\Iterator;
+use Amp\Sql\CommandResult;
 use function Amp\call;
 use Amp\Postgres\PgSqlCommandResult;
 use Amp\Postgres\PooledResultSet;
 use Amp\Postgres\PqCommandResult;
 use Amp\Promise;
-use Amp\Sql\ResultSet as AmpResultSet;
 use Amp\Success;
 use ServiceBus\Storage\Common\Exceptions\ResultSetIterationFailed;
 use ServiceBus\Storage\Common\ResultSet;
@@ -28,7 +29,7 @@ use ServiceBus\Storage\Common\ResultSet;
 class AmpPostgreSQLResultSet implements ResultSet
 {
     /**
-     * @var AmpResultSet|PgSqlCommandResult|PooledResultSet|PqCommandResult
+     * @var Iterator|CommandResult|PooledResultSet
      */
     private $originalResultSet;
 
@@ -38,9 +39,9 @@ class AmpPostgreSQLResultSet implements ResultSet
     private $advanceCalled = false;
 
     /**
-     * @param AmpResultSet|PgSqlCommandResult|PooledResultSet|PqCommandResult $originalResultSet
+     * @param Iterator|CommandResult|PooledResultSet $originalResultSet
      */
-    public function __construct(object $originalResultSet)
+    public function __construct(Iterator|CommandResult|PooledResultSet $originalResultSet)
     {
         $this->originalResultSet = $originalResultSet;
     }
@@ -51,7 +52,7 @@ class AmpPostgreSQLResultSet implements ResultSet
 
         try
         {
-            if ($this->originalResultSet instanceof AmpResultSet)
+            if ($this->originalResultSet instanceof Iterator)
             {
                 return $this->originalResultSet->advance();
             }
@@ -70,14 +71,14 @@ class AmpPostgreSQLResultSet implements ResultSet
     {
         try
         {
-            if (
-                $this->originalResultSet instanceof PgSqlCommandResult ||
-                $this->originalResultSet instanceof PqCommandResult
-            ) {
+            if ($this->originalResultSet instanceof CommandResult)
+            {
                 return null;
             }
 
-            /** @var array<string, float|int|resource|string|null>|null $data */
+            /**
+             * @var array<string, float|int|resource|string|null>|null $data
+             */
             $data = $this->originalResultSet->getCurrent();
 
             return $data;
