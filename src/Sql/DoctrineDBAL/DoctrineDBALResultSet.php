@@ -107,8 +107,6 @@ final class DoctrineDBALResultSet implements ResultSet
 
         /**
          * @psalm-var array<string, float|int|resource|string|null>|null $data
-         *
-         * @var array                                                    $row
          */
         $data = $this->fetchResult[$this->currentPosition - 1] ?? null;
 
