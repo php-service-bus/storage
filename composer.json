@@ -43,7 +43,7 @@
     "ext-pgsql": "*",
     "php-service-bus/common": "v5.0.*",
     "php-service-bus/cache": "v5.0.*",
-    "amphp/postgres": "v1.3.*",
+    "amphp/postgres": "v1.4.*",
     "latitude/latitude": "v4.2.*",
     "psr/log": "v1.1.*",
     "doctrine/dbal": "v3.0.*",
