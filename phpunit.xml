@@ -14,8 +14,17 @@
     </coverage>
     <php>
         <ini name="error_reporting" value="-1"/>
+        <env name="TEST_POSTGRES_DSN" value="pgsql://test:123456789@localhost:5432/test"/>
     </php>
     <testsuites>
+        <testsuite name="Component: common">
+            <directory>./vendor/php-service-bus/common/tests/</directory>
+        </testsuite>
+
+        <testsuite name="Component: cache">
+            <directory>./vendor/php-service-bus/cache/tests/</directory>
+        </testsuite>
+
         <testsuite name="Storage component">
             <directory>./tests/</directory>
         </testsuite>
