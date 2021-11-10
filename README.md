@@ -3,13 +3,13 @@
 [![Packagist](https://img.shields.io/packagist/v/php-service-bus/storage.svg)](https://packagist.org/packages/php-service-bus/storage)
 [![Packagist](https://img.shields.io/packagist/dt/php-service-bus/storage.svg)](https://packagist.org/packages/php-service-bus/storage)
 ![Continuous Integration](https://github.com/php-service-bus/storage/workflows/Continuous%20Integration/badge.svg)
-[![codecov](https://codecov.io/gh/php-service-bus/storage/branch/v5.0/graph/badge.svg?token=0bKwdiuo0S)](https://codecov.io/gh/php-service-bus/storage)
+[![codecov](https://codecov.io/gh/php-service-bus/storage/branch/v5.1/graph/badge.svg?token=0bKwdiuo0S)](https://codecov.io/gh/php-service-bus/storage)
 [![Shepherd](https://shepherd.dev/github/php-service-bus/storage/coverage.svg)](https://shepherd.dev/github/php-service-bus/storage)
 
 This component is part of the [PHP Service Bus](https://github.com/php-service-bus/service-bus): contains database layer implementations
 
 ## Documentation
-[**Storage documentation**](https://github.com/php-service-bus/service-bus/blob/v5.0/.documentation/database.md)
+[**Storage documentation**](https://github.com/php-service-bus/service-bus/blob/v5.1/.documentation/database.md)
 
 ## Contributing
 Contributions are welcome! Please read [CONTRIBUTING](.github/CONTRIBUTING.md) for details.

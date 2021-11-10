@@ -8,7 +8,7 @@
  * @license https://opensource.org/licenses/MIT
  */
 
-declare(strict_types = 0);
+declare(strict_types=0);
 
 namespace ServiceBus\Storage\Sql\AmpPosgreSQL;
 
@@ -16,11 +16,11 @@ use Amp\Postgres\PgSqlCommandResult;
 use Amp\Postgres\PooledResultSet;
 use Amp\Postgres\PqCommandResult;
 use Amp\Sql\ResultSet as AmpResultSet;
-use function Amp\call;
 use Amp\Postgres\Transaction as AmpTransaction;
 use Amp\Promise;
 use Psr\Log\LoggerInterface;
 use ServiceBus\Storage\Common\Transaction;
+use function Amp\call;
 
 /**
  * Async PostgreSQL transaction adapter.

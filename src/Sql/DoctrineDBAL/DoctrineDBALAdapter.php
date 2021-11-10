@@ -8,11 +8,10 @@
  * @license https://opensource.org/licenses/MIT
  */
 
-declare(strict_types = 0);
+declare(strict_types=0);
 
 namespace ServiceBus\Storage\Sql\DoctrineDBAL;
 
-use function Amp\call;
 use Amp\Promise;
 use Amp\Success;
 use Doctrine\DBAL\Connection;
@@ -22,6 +21,7 @@ use Psr\Log\NullLogger;
 use ServiceBus\Storage\Common\DatabaseAdapter;
 use ServiceBus\Storage\Common\Exceptions\InvalidConfigurationOptions;
 use ServiceBus\Storage\Common\StorageConfiguration;
+use function Amp\call;
 
 /**
  * DoctrineDBAL adapter.
@@ -58,7 +58,7 @@ final class DoctrineDBALAdapter implements DatabaseAdapter
         try
         {
             $statement = $this->connection()->prepare($queryString);
-            $result = $statement->execute($parameters);
+            $result    = $statement->executeQuery($parameters);
 
             return new Success(new DoctrineDBALResultSet($this->connection(), $result));
         }

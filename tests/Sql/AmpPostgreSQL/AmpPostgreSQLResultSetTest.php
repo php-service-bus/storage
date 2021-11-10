@@ -1,4 +1,6 @@
-<?php /** @noinspection PhpUnhandledExceptionInspection */
+<?php
+
+/** @noinspection PhpUnhandledExceptionInspection */
 
 /**
  * SQL databases adapters implementation.
@@ -8,18 +10,18 @@
  * @license https://opensource.org/licenses/MIT
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace ServiceBus\Storage\Tests\Sql\AmpPostgreSQL;
 
 use Amp\Loop;
+use PHPUnit\Framework\Constraint\IsType;
+use PHPUnit\Framework\TestCase;
+use ServiceBus\Storage\Sql\AmpPosgreSQL\AmpPostgreSQLAdapter;
 use function Amp\Promise\wait;
 use function ServiceBus\Storage\Sql\AmpPosgreSQL\postgreSqlAdapterFactory;
 use function ServiceBus\Storage\Sql\fetchAll;
 use function ServiceBus\Storage\Sql\fetchOne;
-use PHPUnit\Framework\Constraint\IsType;
-use PHPUnit\Framework\TestCase;
-use ServiceBus\Storage\Sql\AmpPosgreSQL\AmpPostgreSQLAdapter;
 
 /**
  *

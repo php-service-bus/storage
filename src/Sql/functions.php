@@ -8,12 +8,10 @@
  * @license https://opensource.org/licenses/MIT
  */
 
-declare(strict_types = 0);
+declare(strict_types=0);
 
 namespace ServiceBus\Storage\Sql;
 
-use function Amp\call;
-use function Latitude\QueryBuilder\field;
 use Amp\Promise;
 use Latitude\QueryBuilder\CriteriaInterface;
 use Latitude\QueryBuilder\Engine\PostgresEngine;
@@ -25,6 +23,8 @@ use ServiceBus\Storage\Common\Exceptions\IncorrectParameterCast;
 use ServiceBus\Storage\Common\Exceptions\OneResultExpected;
 use ServiceBus\Storage\Common\QueryExecutor;
 use ServiceBus\Storage\Common\ResultSet;
+use function Amp\call;
+use function Latitude\QueryBuilder\field;
 
 /**
  * Collect iterator data
@@ -309,8 +309,6 @@ function queryBuilder(EngineInterface $engine = null): QueryFactory
 
 /**
  * Create select query (for PostgreSQL).
- *
- * @noinspection PhpDocSignatureInspection
  */
 function selectQuery(string $fromTable, string ...$columns): LatitudeQuery\SelectQuery
 {

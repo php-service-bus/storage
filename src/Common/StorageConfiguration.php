@@ -8,7 +8,7 @@
  * @license https://opensource.org/licenses/MIT
  */
 
-declare(strict_types = 0);
+declare(strict_types=0);
 
 namespace ServiceBus\Storage\Common;
 
@@ -118,7 +118,8 @@ final class StorageConfiguration
          *    port:int|null,
          *    user:string|null,
          *    pass:string|null,
-         *    path:string|null
+         *    path:string|null,
+         *    query:string|null
          * }|null|false $parsedDSN
          *
          * @var array|false|null $parsedDSN
@@ -136,7 +137,7 @@ final class StorageConfiguration
 
         if (!empty($parsedDSN['query']))
         {
-            $queryString = (string) $parsedDSN['query'];
+            $queryString = $parsedDSN['query'];
         }
 
         \parse_str($queryString, $this->queryParameters);

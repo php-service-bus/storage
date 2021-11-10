@@ -1,4 +1,6 @@
-<?php /** @noinspection PhpUnhandledExceptionInspection */
+<?php
+
+/** @noinspection PhpUnhandledExceptionInspection */
 
 /**
  * SQL databases adapters implementation.
@@ -8,10 +10,11 @@
  * @license https://opensource.org/licenses/MIT
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace ServiceBus\Storage\Tests\Sql;
 
+use PHPUnit\Framework\TestCase;
 use function ServiceBus\Storage\Sql\buildQuery;
 use function ServiceBus\Storage\Sql\cast;
 use function ServiceBus\Storage\Sql\deleteQuery;
@@ -21,7 +24,6 @@ use function ServiceBus\Storage\Sql\notEqualsCriteria;
 use function ServiceBus\Storage\Sql\selectQuery;
 use function ServiceBus\Storage\Sql\toSnakeCase;
 use function ServiceBus\Storage\Sql\updateQuery;
-use PHPUnit\Framework\TestCase;
 
 /**
  *

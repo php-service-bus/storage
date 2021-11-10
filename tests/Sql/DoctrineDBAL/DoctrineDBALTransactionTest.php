@@ -1,4 +1,6 @@
-<?php /** @noinspection PhpUnhandledExceptionInspection */
+<?php
+
+/** @noinspection PhpUnhandledExceptionInspection */
 
 /**
  * SQL databases adapters implementation.
@@ -8,15 +10,15 @@
  * @license https://opensource.org/licenses/MIT
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace ServiceBus\Storage\Tests\Sql\DoctrineDBAL;
 
-use function Amp\Promise\wait;
-use function ServiceBus\Storage\Sql\DoctrineDBAL\inMemoryAdapter;
 use ServiceBus\Storage\Common\DatabaseAdapter;
 use ServiceBus\Storage\Sql\DoctrineDBAL\DoctrineDBALAdapter;
 use ServiceBus\Storage\Tests\Sql\BaseTransactionTest;
+use function Amp\Promise\wait;
+use function ServiceBus\Storage\Sql\DoctrineDBAL\inMemoryAdapter;
 
 /**
  *

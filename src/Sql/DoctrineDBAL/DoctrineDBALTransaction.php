@@ -8,16 +8,16 @@
  * @license https://opensource.org/licenses/MIT
  */
 
-declare(strict_types = 0);
+declare(strict_types=0);
 
 namespace ServiceBus\Storage\Sql\DoctrineDBAL;
 
-use function Amp\call;
 use Amp\Promise;
 use Amp\Success;
 use Doctrine\DBAL\Connection;
 use Psr\Log\LoggerInterface;
 use ServiceBus\Storage\Common\Transaction;
+use function Amp\call;
 
 /**
  * @internal
@@ -47,7 +47,7 @@ final class DoctrineDBALTransaction implements Transaction
         try
         {
             $statement = $this->connection->prepare($queryString);
-            $result = $statement->execute($parameters);
+            $result = $statement->executeQuery($parameters);
 
             return new Success(new DoctrineDBALResultSet($this->connection, $result));
         }

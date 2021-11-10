@@ -8,13 +8,13 @@
  * @license https://opensource.org/licenses/MIT
  */
 
-declare(strict_types = 0);
+declare(strict_types=0);
 
 namespace ServiceBus\Storage\Sql\Migration;
 
 use Amp\Promise;
 use function Amp\call;
-use function Amp\File\scandir;
+use function Amp\File\listFiles;
 
 /**
  *
@@ -55,7 +55,6 @@ final class SqlMigrationLoader
                 {
                     /**
                      * @psalm-suppress UnresolvableInclude
-                     * @noinspection   PhpIncludeInspection
                      */
                     include_once (string) $file;
 
@@ -65,7 +64,7 @@ final class SqlMigrationLoader
                     /** @psalm-var class-string<Migration> $class */
                     $class = \sprintf('\%s', $name);
 
-                    $migration = new $class;
+                    $migration = new $class();
 
                     /** @psalm-suppress RedundantConditionGivenDocblockType */
                     if ($migration instanceof Migration)
@@ -92,7 +91,7 @@ final class SqlMigrationLoader
             function (): \Generator
             {
                 /** @var string[] $files */
-                $files = yield scandir($this->directory);
+                $files = yield listFiles($this->directory);
 
                 return \array_filter(
                     \array_map(

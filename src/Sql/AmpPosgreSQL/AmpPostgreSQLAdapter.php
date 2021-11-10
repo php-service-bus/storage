@@ -8,15 +8,14 @@
  * @license https://opensource.org/licenses/MIT
  */
 
-declare(strict_types = 0);
+declare(strict_types=0);
 
 namespace ServiceBus\Storage\Sql\AmpPosgreSQL;
 
 use Amp\Iterator;
 use Amp\Postgres\PooledResultSet;
 use Amp\Sql\CommandResult;
-use function Amp\call;
-use function Amp\Postgres\pool;
+use Amp\Sql\Common\ConnectionPool;
 use Amp\Coroutine;
 use Amp\Postgres\ConnectionConfig;
 use Amp\Postgres\Pool;
@@ -26,6 +25,8 @@ use Psr\Log\NullLogger;
 use ServiceBus\Storage\Common\DatabaseAdapter;
 use ServiceBus\Storage\Common\Exceptions\InvalidConfigurationOptions;
 use ServiceBus\Storage\Common\StorageConfiguration;
+use function Amp\call;
+use function Amp\Postgres\pool;
 
 /**
  * @see https://github.com/amphp/postgres
@@ -74,7 +75,7 @@ final class AmpPostgreSQLAdapter implements DatabaseAdapter
     public function execute(string $queryString, array $parameters = []): Promise
     {
         return call(
-            function () use ($queryString, $parameters) : \Generator
+            function () use ($queryString, $parameters): \Generator
             {
                 try
                 {
@@ -172,8 +173,8 @@ final class AmpPostgreSQLAdapter implements DatabaseAdapter
         {
             $queryData = $this->configuration->queryParameters;
 
-            $maxConnectionsCount = (int) ($queryData['max_connections'] ?? Pool::DEFAULT_MAX_CONNECTIONS);
-            $idleTimeout         = (int) ($queryData['idle_timeout'] ?? Pool::DEFAULT_IDLE_TIMEOUT);
+            $maxConnectionsCount = (int) ($queryData['max_connections'] ?? ConnectionPool::DEFAULT_MAX_CONNECTIONS);
+            $idleTimeout         = (int) ($queryData['idle_timeout'] ?? ConnectionPool::DEFAULT_IDLE_TIMEOUT);
 
             $this->pool = pool(
                 new ConnectionConfig(

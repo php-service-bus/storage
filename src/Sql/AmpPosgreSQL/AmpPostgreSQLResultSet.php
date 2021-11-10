@@ -8,13 +8,12 @@
  * @license https://opensource.org/licenses/MIT
  */
 
-declare(strict_types = 0);
+declare(strict_types=0);
 
 namespace ServiceBus\Storage\Sql\AmpPosgreSQL;
 
 use Amp\Iterator;
 use Amp\Sql\CommandResult;
-use function Amp\call;
 use Amp\Postgres\PgSqlCommandResult;
 use Amp\Postgres\PooledResultSet;
 use Amp\Postgres\PqCommandResult;
@@ -22,6 +21,7 @@ use Amp\Promise;
 use Amp\Success;
 use ServiceBus\Storage\Common\Exceptions\ResultSetIterationFailed;
 use ServiceBus\Storage\Common\ResultSet;
+use function Amp\call;
 
 /**
  *

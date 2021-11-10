@@ -1,4 +1,6 @@
-<?php /** @noinspection PhpUnhandledExceptionInspection */
+<?php
+
+/** @noinspection PhpUnhandledExceptionInspection */
 
 /**
  * SQL databases adapters implementation.
@@ -8,11 +10,17 @@
  * @license https://opensource.org/licenses/MIT
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace ServiceBus\Storage\Tests\Sql;
 
 use Amp\Loop;
+use Amp\Promise;
+use PHPUnit\Framework\TestCase;
+use ServiceBus\Storage\Common\DatabaseAdapter;
+use ServiceBus\Storage\Common\Exceptions\OneResultExpected;
+use ServiceBus\Storage\Common\Exceptions\StorageInteractingFailed;
+use ServiceBus\Storage\Common\Exceptions\UniqueConstraintViolationCheckFailed;
 use function Amp\Promise\wait;
 use function ServiceBus\Storage\Sql\equalsCriteria;
 use function ServiceBus\Storage\Sql\fetchAll;
@@ -20,12 +28,6 @@ use function ServiceBus\Storage\Sql\fetchOne;
 use function ServiceBus\Storage\Sql\find;
 use function ServiceBus\Storage\Sql\remove;
 use function ServiceBus\Storage\Sql\unescapeBinary;
-use Amp\Promise;
-use PHPUnit\Framework\TestCase;
-use ServiceBus\Storage\Common\DatabaseAdapter;
-use ServiceBus\Storage\Common\Exceptions\OneResultExpected;
-use ServiceBus\Storage\Common\Exceptions\StorageInteractingFailed;
-use ServiceBus\Storage\Common\Exceptions\UniqueConstraintViolationCheckFailed;
 
 /**
  *
