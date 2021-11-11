@@ -14,25 +14,32 @@ namespace ServiceBus\Storage\Sql\AmpPosgreSQL;
 
 use Amp\Iterator;
 use Amp\Postgres\PooledResultSet;
+use Amp\Postgres\TimeoutConnector;
 use Amp\Sql\CommandResult;
-use Amp\Sql\Common\ConnectionPool;
 use Amp\Coroutine;
 use Amp\Postgres\ConnectionConfig;
 use Amp\Postgres\Pool;
 use Amp\Promise;
+use Amp\Sql\Common\RetryConnector;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use ServiceBus\Storage\Common\DatabaseAdapter;
 use ServiceBus\Storage\Common\Exceptions\InvalidConfigurationOptions;
 use ServiceBus\Storage\Common\StorageConfiguration;
 use function Amp\call;
-use function Amp\Postgres\pool;
+use function Amp\Postgres\connector;
 
 /**
  * @see https://github.com/amphp/postgres
  */
 final class AmpPostgreSQLAdapter implements DatabaseAdapter
 {
+    private const DEFAULT_CONNECTION_TIMEOUT = 5000;
+    private const MAX_CONNECTION_RETRY_COUNT = 10;
+
+    private const DEFAULT_MAX_CONNECTIONS = 100;
+    private const DEFAULT_IDLE_TIMEOUT = 60;
+
     /**
      * @var StorageConfiguration StorageConfiguration
      */
@@ -66,10 +73,7 @@ final class AmpPostgreSQLAdapter implements DatabaseAdapter
 
     public function __destruct()
     {
-        if ($this->pool !== null)
-        {
-            $this->pool->close();
-        }
+        $this->pool?->close();
     }
 
     public function execute(string $queryString, array $parameters = []): Promise
@@ -173,19 +177,23 @@ final class AmpPostgreSQLAdapter implements DatabaseAdapter
         {
             $queryData = $this->configuration->queryParameters;
 
-            $maxConnectionsCount = (int) ($queryData['max_connections'] ?? ConnectionPool::DEFAULT_MAX_CONNECTIONS);
-            $idleTimeout         = (int) ($queryData['idle_timeout'] ?? ConnectionPool::DEFAULT_IDLE_TIMEOUT);
-
-            $this->pool = pool(
-                new ConnectionConfig(
-                    (string) $this->configuration->host,
+            $this->pool = new Pool(
+                config: new ConnectionConfig(
+                    $this->configuration->host ?? 'localhost',
                     $this->configuration->port ?? ConnectionConfig::DEFAULT_PORT,
                     $this->configuration->username,
                     $this->configuration->password,
                     $this->configuration->databaseName
                 ),
-                $maxConnectionsCount,
-                $idleTimeout
+                maxConnections: (int) ($queryData['max_connections'] ?? self::DEFAULT_MAX_CONNECTIONS),
+                idleTimeout: (int) ($queryData['idle_timeout'] ?? self::DEFAULT_IDLE_TIMEOUT),
+                resetConnections: true,
+                connector: connector(
+                    new RetryConnector(
+                        connector: new TimeoutConnector(self::DEFAULT_CONNECTION_TIMEOUT),
+                        maxTries: self::MAX_CONNECTION_RETRY_COUNT
+                    )
+                )
             );
         }
 
