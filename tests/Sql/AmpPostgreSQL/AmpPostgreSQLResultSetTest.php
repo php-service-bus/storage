@@ -96,7 +96,7 @@ final class AmpPostgreSQLResultSetTest extends TestCase
                 );
 
                 self::assertNotEmpty($result);
-                self:: assertSame(['id' => $uuid2, 'value' => 'value2'], $result);
+                self::assertSame(['id' => $uuid2, 'value' => 'value2'], $result);
 
                 $result = yield fetchOne(
                     yield self::$adapter->execute(

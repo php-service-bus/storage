@@ -12,9 +12,6 @@ declare(strict_types=0);
 
 namespace ServiceBus\Storage\Common\Exceptions;
 
-/**
- *
- */
 final class ConnectionFailed extends \RuntimeException implements StorageExceptionMarker
 {
 }

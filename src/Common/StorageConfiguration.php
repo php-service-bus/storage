@@ -23,6 +23,7 @@ final class StorageConfiguration
      * Original DSN.
      *
      * @psalm-readonly
+     * @psalm-var non-empty-string
      *
      * @var string
      */
@@ -32,6 +33,7 @@ final class StorageConfiguration
      * Scheme.
      *
      * @psalm-readonly
+     * @psalm-var non-empty-string|null
      *
      * @var string|null
      */
@@ -41,8 +43,9 @@ final class StorageConfiguration
      * Database host.
      *
      * @psalm-readonly
+     * @psalm-var non-empty-string
      *
-     * @var string|null
+     * @var string
      */
     public $host;
 
@@ -50,6 +53,7 @@ final class StorageConfiguration
      * Database port.
      *
      * @psalm-readonly
+     * @psalm-var positive-int|null
      *
      * @var int|null
      */
@@ -59,6 +63,7 @@ final class StorageConfiguration
      * Database user.
      *
      * @psalm-readonly
+     * @psalm-var non-empty-string|null
      *
      * @var string|null
      */
@@ -68,6 +73,7 @@ final class StorageConfiguration
      * Database user password.
      *
      * @psalm-readonly
+     * @psalm-var non-empty-string|null
      *
      * @var string|null
      */
@@ -77,6 +83,7 @@ final class StorageConfiguration
      * Database name.
      *
      * @psalm-readonly
+     * @psalm-var non-empty-string|null
      *
      * @var string|null
      */
@@ -86,6 +93,7 @@ final class StorageConfiguration
      * Connection encoding.
      *
      * @psalm-readonly
+     * @psalm-var non-empty-string|null
      *
      * @var string|null
      */
@@ -95,15 +103,16 @@ final class StorageConfiguration
      * All query parameters.
      *
      * @psalm-readonly
+     * @psalm-var array<array-key, string>
      *
      * @var array
      */
     public $queryParameters = [];
 
     /**
-     * @param string $connectionDSN DSN examples:
-     *                              - inMemory: sqlite:///:memory:
-     *                              - AsyncPostgreSQL: pgsql://user:password@host:port/database
+     * @psalm-param non-empty-string $connectionDSN DSN examples:
+     *                                              - inMemory: sqlite:///:memory:
+     *                                              - AsyncPostgreSQL: pgsql://user:password@host:port/database
      *
      * @throws \ServiceBus\Storage\Common\Exceptions\InvalidConfigurationOptions
      */
@@ -113,13 +122,13 @@ final class StorageConfiguration
 
         /**
          * @psalm-var array{
-         *    scheme:string|null,
-         *    host:string|null,
-         *    port:int|null,
-         *    user:string|null,
-         *    pass:string|null,
-         *    path:string|null,
-         *    query:string|null
+         *    scheme:non-empty-string|null,
+         *    host:non-empty-string|null,
+         *    port:positive-int|null,
+         *    user:non-empty-string|null,
+         *    pass:non-empty-string|null,
+         *    path:non-empty-string|null,
+         *    query:non-empty-string|null
          * }|null|false $parsedDSN
          *
          * @var array|false|null $parsedDSN
@@ -140,44 +149,22 @@ final class StorageConfiguration
             $queryString = $parsedDSN['query'];
         }
 
-        \parse_str($queryString, $this->queryParameters);
+        \parse_str($queryString, $queryParameters);
 
-        /** @var array{charset:string|null, max_connections:int|null, idle_timeout:int|null} $queryParameters */
-        $queryParameters = $this->queryParameters;
+        /** @psalm-var array<array-key, string> $queryParameters */
+        $this->queryParameters = $queryParameters;
 
-        $this->originalDSN = $connectionDSN;
-        $this->port        = $parsedDSN['port'] ?? null;
-        $this->scheme      = self::extract('scheme', $parsedDSN);
-        $this->host        = self::extract('host', $parsedDSN, 'localhost');
-        $this->username    = self::extract('user', $parsedDSN);
-        $this->password    = self::extract('pass', $parsedDSN);
-        $this->encoding    = self::extract('charset', $queryParameters, 'UTF-8');
+        $this->originalDSN  = $connectionDSN;
+        $this->port         = !empty($parsedDSN['port']) ? $parsedDSN['port'] : null;
+        $this->scheme       = !empty($parsedDSN['scheme']) ? $parsedDSN['scheme'] : null;
+        $this->host         = !empty($parsedDSN['host']) ? $parsedDSN['host'] : 'localhost';
+        $this->username     = !empty($parsedDSN['user']) ? $parsedDSN['user'] : null;
+        $this->password     = !empty($parsedDSN['pass']) ? $parsedDSN['pass'] : null;
+        $this->encoding     = !empty($queryParameters['charset']) ? $queryParameters['charset'] : 'UTF-8';
 
-        $databaseName = self::extract('path', $parsedDSN);
-
-        if ($databaseName !== null)
-        {
-            $databaseName = \ltrim($databaseName, '/');
-        }
+        /** @psalm-var non-empty-string|null $databaseName */
+        $databaseName = !empty($parsedDSN['path']) ? \ltrim($parsedDSN['path'], '/') : null;
 
         $this->databaseName = $databaseName;
-    }
-
-    private static function extract(string $key, array $collection, ?string $default = null): ?string
-    {
-        if (\array_key_exists($key, $collection) === false)
-        {
-            return $default;
-        }
-
-        /** @var string|null $value */
-        $value = $collection[$key];
-
-        if (empty($value))
-        {
-            return $default;
-        }
-
-        return $value;
     }
 }

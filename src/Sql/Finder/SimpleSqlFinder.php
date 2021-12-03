@@ -28,6 +28,8 @@ final class SimpleSqlFinder implements SqlFinder
     /**
      * Table name.
      *
+     * @psalm-var non-empty-string
+     *
      * @var string
      */
     private $collectionName;
@@ -38,10 +40,7 @@ final class SimpleSqlFinder implements SqlFinder
     private $databaseAdapter;
 
     /**
-     * SimpleSqlFinder constructor.
-     *
-     * @param string          $collectionName
-     * @param DatabaseAdapter $databaseAdapter
+     * @psalm-param non-empty-string $collectionName
      */
     public function __construct(string $collectionName, DatabaseAdapter $databaseAdapter)
     {
@@ -49,7 +48,7 @@ final class SimpleSqlFinder implements SqlFinder
         $this->databaseAdapter = $databaseAdapter;
     }
 
-    public function findOneById($id): Promise
+    public function findOneById(string|int $id): Promise
     {
         return $this->findOneBy([equalsCriteria('id', $id)]);
     }
@@ -60,7 +59,11 @@ final class SimpleSqlFinder implements SqlFinder
             function () use ($criteria): \Generator
             {
                 /** @var \ServiceBus\Storage\Common\ResultSet $resultSet */
-                $resultSet = yield find($this->databaseAdapter, $this->collectionName, $criteria);
+                $resultSet = yield find(
+                    queryExecutor: $this->databaseAdapter,
+                    tableName: $this->collectionName,
+                    criteria: $criteria
+                );
 
                 /** @var array|null $result */
                 $result = yield fetchOne($resultSet);
@@ -75,13 +78,20 @@ final class SimpleSqlFinder implements SqlFinder
         );
     }
 
-    public function find(array $criteria, ?int $limit = null, array $orderBy = []): Promise
+    public function find(array $criteria, ?int $offset, ?int $limit = null, ?array $orderBy = null): Promise
     {
         return call(
-            function () use ($criteria, $limit, $orderBy): \Generator
+            function () use ($criteria, $offset, $limit, $orderBy): \Generator
             {
                 /** @var \ServiceBus\Storage\Common\ResultSet $resultSet */
-                $resultSet = yield find($this->databaseAdapter, $this->collectionName, $criteria, $limit, $orderBy);
+                $resultSet = yield find(
+                    queryExecutor: $this->databaseAdapter,
+                    tableName: $this->collectionName,
+                    criteria: $criteria,
+                    limit: $limit,
+                    offset: $offset,
+                    orderBy: $orderBy
+                );
 
                 /** @var array $collection */
                 $collection = yield fetchAll($resultSet);

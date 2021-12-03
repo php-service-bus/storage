@@ -1,3 +1,7 @@
 parameters:
 	checkMissingIterableValueType: false
 	checkGenericClassInNonGenericObjectType: false
+	ignoreErrors:
+		- '#Cannot cast mixed to int#'
+		- '#Access to undefined constant ServiceBus\\Storage\\Sql\\Migration\\MigrationType(.*)#'
+		- '#Access to an undefined property ServiceBus\\Storage\\Sql\\Migration\\MigrationType(.*)#'

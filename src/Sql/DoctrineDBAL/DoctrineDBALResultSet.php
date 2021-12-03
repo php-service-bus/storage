@@ -20,7 +20,7 @@ use ServiceBus\Storage\Common\Exceptions\ResultSetIterationFailed;
 use ServiceBus\Storage\Common\ResultSet;
 
 /**
- *
+ * @internal
  */
 final class DoctrineDBALResultSet implements ResultSet
 {
@@ -122,7 +122,9 @@ final class DoctrineDBALResultSet implements ResultSet
     {
         try
         {
-            return new Success($this->connection->lastInsertId($sequence));
+            $result = $this->connection->lastInsertId($sequence);
+
+            return $result !== false ? new Success($result) : new Success(null);
         }
         catch (\Throwable $throwable)
         {

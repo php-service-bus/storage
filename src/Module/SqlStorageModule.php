@@ -21,9 +21,6 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 
-/**
- *
- */
 final class SqlStorageModule implements ServiceBusModule
 {
     private const ADAPTER_TYPE_POSTGRES  = 'postgres';
@@ -36,11 +33,15 @@ final class SqlStorageModule implements ServiceBusModule
     ];
 
     /**
+     * @psalm-var non-empty-string
+     *
      * @var string
      */
     private $adapterType;
 
     /**
+     * @psalm-var non-empty-string
+     *
      * @var string
      */
     private $connectionDSN;
@@ -57,7 +58,7 @@ final class SqlStorageModule implements ServiceBusModule
      *
      * DSN example: pgsql://user:password@host:port/database
      *
-     * @param string $connectionDSN
+     * @psalm-param non-empty-string $connectionDSN
      */
     public static function postgreSQL(string $connectionDSN): self
     {
@@ -82,9 +83,6 @@ final class SqlStorageModule implements ServiceBusModule
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function boot(ContainerBuilder $containerBuilder): void
     {
         $this->injectParameters($containerBuilder);
@@ -115,6 +113,10 @@ final class SqlStorageModule implements ServiceBusModule
         $containerBuilder->setParameter('service_bus.infrastructure.sql.connection_dsn', $this->connectionDSN);
     }
 
+    /**
+     * @psalm-param non-empty-string $adapterType
+     * @psalm-param non-empty-string $connectionDSN
+     */
     private function __construct(string $adapterType, string $connectionDSN)
     {
         $this->adapterType   = $adapterType;

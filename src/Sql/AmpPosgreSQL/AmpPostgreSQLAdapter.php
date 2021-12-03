@@ -38,7 +38,7 @@ final class AmpPostgreSQLAdapter implements DatabaseAdapter
     private const MAX_CONNECTION_RETRY_COUNT = 10;
 
     private const DEFAULT_MAX_CONNECTIONS = 100;
-    private const DEFAULT_IDLE_TIMEOUT = 60;
+    private const DEFAULT_IDLE_TIMEOUT    = 60;
 
     /**
      * @var StorageConfiguration StorageConfiguration
@@ -179,7 +179,7 @@ final class AmpPostgreSQLAdapter implements DatabaseAdapter
 
             $this->pool = new Pool(
                 config: new ConnectionConfig(
-                    $this->configuration->host ?? 'localhost',
+                    $this->configuration->host,
                     $this->configuration->port ?? ConnectionConfig::DEFAULT_PORT,
                     $this->configuration->username,
                     $this->configuration->password,

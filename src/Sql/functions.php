@@ -30,7 +30,7 @@ use function Latitude\QueryBuilder\field;
  * Collect iterator data
  * Not recommended for use on large amounts of data.
  *
- * @return Promise<array<int, mixed>>
+ * @psalm-return Promise<array<array-key, array<string, float|int|resource|string|null>>>
  *
  * @throws \ServiceBus\Storage\Common\Exceptions\ResultSetIterationFailed
  */
@@ -43,7 +43,12 @@ function fetchAll(ResultSet $iterator): Promise
 
             while (yield $iterator->advance())
             {
-                $array[] = $iterator->getCurrent();
+                $result = $iterator->getCurrent();
+
+                if ($result !== null)
+                {
+                    $array[] = $result;
+                }
             }
 
             return $array;
@@ -56,7 +61,7 @@ function fetchAll(ResultSet $iterator): Promise
  *
  * @psalm-suppress MixedReturnTypeCoercion
  *
- * @return Promise<array<string, mixed>|null>
+ * @psalm-return Promise<array<string, mixed>|null>
  *
  * @throws \ServiceBus\Storage\Common\Exceptions\ResultSetIterationFailed
  * @throws \ServiceBus\Storage\Common\Exceptions\OneResultExpected The result must contain only 1 row
@@ -96,7 +101,9 @@ function fetchOne(ResultSet $iterator): Promise
 /**
  * Returns the value of the specified sequence (string).
  *
- * @return Promise<string>
+ * @psalm-param non-empty-string $sequenceName
+ *
+ * @psalm-return Promise<string>
  */
 function sequence(string $sequenceName, QueryExecutor $executor): Promise
 {
@@ -107,7 +114,7 @@ function sequence(string $sequenceName, QueryExecutor $executor): Promise
             $resultSet = yield $executor->execute(\sprintf('SELECT nextval(\'%s\')', $sequenceName));
 
             /**
-             * @psalm-var array{nextval: string} $result
+             * @psalm-var array{nextval: non-empty-string} $result
              */
             $result = yield fetchOne($resultSet);
 
@@ -121,32 +128,38 @@ function sequence(string $sequenceName, QueryExecutor $executor): Promise
 /**
  * Create & execute SELECT query.
  *
- * @psalm-param    array<mixed, \Latitude\QueryBuilder\CriteriaInterface> $criteria
- * @psalm-param    array<string, string>                                  $orderBy
+ * @psalm-param non-empty-string                                       $tableName
+ * @psalm-param array<mixed, \Latitude\QueryBuilder\CriteriaInterface> $criteria
+ * @psalm-param positive-int|null                                      $limit
+ * @psalm-param array<non-empty-string, non-empty-string>|null         $orderBy
  *
- * @param \Latitude\QueryBuilder\CriteriaInterface[]                      $criteria
- *
- * @return Promise<\ServiceBus\Storage\Common\ResultSet>
+ * @psalm-return Promise<\ServiceBus\Storage\Common\ResultSet>
  *
  * @throws \ServiceBus\Storage\Common\Exceptions\ConnectionFailed Could not connect to database
  * @throws \ServiceBus\Storage\Common\Exceptions\InvalidConfigurationOptions
  * @throws \ServiceBus\Storage\Common\Exceptions\StorageInteractingFailed Basic type of interaction errors
  * @throws \ServiceBus\Storage\Common\Exceptions\UniqueConstraintViolationCheckFailed
  */
-function find(QueryExecutor $queryExecutor, string $tableName, array $criteria = [], ?int $limit = null, array $orderBy = []): Promise
-{
+function find(
+    QueryExecutor $queryExecutor,
+    string        $tableName,
+    array         $criteria = [],
+    ?int          $limit = null,
+    ?int          $offset = null,
+    ?array        $orderBy = null
+): Promise {
     return call(
-        static function () use ($queryExecutor, $tableName, $criteria, $limit, $orderBy): \Generator
+        static function () use ($queryExecutor, $tableName, $criteria, $offset, $limit, $orderBy): \Generator
         {
-            /**
-             * @var string $query
-             * @var array  $parameters
-             */
-            [$query, $parameters] = buildQuery(selectQuery($tableName), $criteria, $orderBy, $limit);
+            $queryData = buildQuery(
+                queryBuilder: selectQuery($tableName),
+                criteria: $criteria,
+                orderBy: $orderBy,
+                offset: $offset,
+                limit: $limit
+            );
 
-            /** @psalm-var array<string, string|int|float|null> $parameters */
-
-            return yield $queryExecutor->execute($query, $parameters);
+            return yield $queryExecutor->execute($queryData['query'], $queryData['parameters']);
         }
     );
 }
@@ -154,11 +167,10 @@ function find(QueryExecutor $queryExecutor, string $tableName, array $criteria =
 /**
  * Create & execute DELETE query.
  *
- * @psalm-param  array<array-key, \Latitude\QueryBuilder\CriteriaInterface> $criteria
+ * @psalm-param non-empty-string                                           $tableName
+ * @psalm-param array<array-key, \Latitude\QueryBuilder\CriteriaInterface> $criteria
  *
- * @param \Latitude\QueryBuilder\CriteriaInterface[]                        $criteria
- *
- * @return Promise<int>
+ * @psalm-return Promise<int>
  *
  * @throws \ServiceBus\Storage\Common\Exceptions\ConnectionFailed Could not connect to database
  * @throws \ServiceBus\Storage\Common\Exceptions\InvalidConfigurationOptions
@@ -171,16 +183,15 @@ function remove(QueryExecutor $queryExecutor, string $tableName, array $criteria
     return call(
         static function () use ($queryExecutor, $tableName, $criteria): \Generator
         {
-            /**
-             * @var string                                        $query
-             * @psalm-var array<array-key, string|int|float|null> $parameters
-             */
-            [$query, $parameters] = buildQuery(deleteQuery($tableName), $criteria);
+            $queryData = buildQuery(
+                queryBuilder: deleteQuery($tableName),
+                criteria: $criteria
+            );
 
             /**
              * @var \ServiceBus\Storage\Common\ResultSet $resultSet
              */
-            $resultSet = yield $queryExecutor->execute($query, $parameters);
+            $resultSet = yield $queryExecutor->execute($queryData['query'], $queryData['parameters']);
 
             $affectedRows = $resultSet->affectedRows();
 
@@ -194,19 +205,21 @@ function remove(QueryExecutor $queryExecutor, string $tableName, array $criteria
 /**
  * Create query from specified parameters.
  *
- * @psalm-param array<string, string>                $orderBy
+ * @psalm-param array<array-key, \Latitude\QueryBuilder\CriteriaInterface> $criteria
+ * @psalm-param array<non-empty-string, non-empty-string>|null             $orderBy
+ * @psalm-param positive-int|null                                          $limit
  *
- * @param \Latitude\QueryBuilder\CriteriaInterface[] $criteria
- *
- * @return array 0 - SQL query; 1 - query parameters
+ * @psalm-return array{query:non-empty-string, parameters: array<array-key, string|int|float|null>}
  */
 function buildQuery(
     LatitudeQuery\AbstractQuery $queryBuilder,
-    array $criteria = [],
-    array $orderBy = [],
-    ?int $limit = null
+    array                       $criteria = [],
+    ?array                      $orderBy = null,
+    ?int                        $offset = null,
+    ?int                        $limit = null
 ): array {
     /** @var LatitudeQuery\DeleteQuery|LatitudeQuery\SelectQuery|LatitudeQuery\UpdateQuery $queryBuilder */
+
     $isFirstCondition = true;
 
     foreach ($criteria as $criteriaItem)
@@ -218,29 +231,43 @@ function buildQuery(
 
     if ($queryBuilder instanceof LatitudeQuery\SelectQuery)
     {
-        foreach ($orderBy as $column => $direction)
+        if ($orderBy !== null)
         {
-            $queryBuilder->orderBy($column, $direction);
+            foreach ($orderBy as $column => $direction)
+            {
+                $queryBuilder->orderBy($column, $direction);
+            }
         }
 
-        if (null !== $limit)
+        if ($limit !== null)
         {
             $queryBuilder->limit($limit);
+        }
+
+        if ($offset !== null)
+        {
+            $queryBuilder->offset($offset);
         }
     }
 
     $compiledQuery = $queryBuilder->compile();
 
+    /** @psalm-var non-empty-string $query */
+    $query = $compiledQuery->sql();
+
+    /** @psalm-var array<array-key, string|int|float|null> $parameters */
+    $parameters = $compiledQuery->params();
+
     return [
-        $compiledQuery->sql(),
-        $compiledQuery->params(),
+        'query'      => $query,
+        'parameters' => $parameters
     ];
 }
 
 /**
  * Unescape binary data.
  *
- * @psalm-param  array<string, string|int|null|float>|string $data
+ * @psalm-param array<string, string|int|null|float>|string $data
  *
  * @psalm-return array<string, string|int|null|float>|string
  */
@@ -268,11 +295,11 @@ function unescapeBinary(QueryExecutor $queryExecutor, array|string $data): array
 /**
  * Create equals criteria.
  *
- * @param float|int|object|string $value
+ * @psalm-param non-empty-string $field
  *
  * @throws \ServiceBus\Storage\Common\Exceptions\IncorrectParameterCast
  */
-function equalsCriteria(string $field, $value): CriteriaInterface
+function equalsCriteria(string $field, float|int|object|string $value): CriteriaInterface
 {
     if (\is_object($value))
     {
@@ -285,11 +312,11 @@ function equalsCriteria(string $field, $value): CriteriaInterface
 /**
  * Create not equals criteria.
  *
- * @param float|int|object|string $value
+ * @psalm-param non-empty-string $field
  *
  * @throws \ServiceBus\Storage\Common\Exceptions\IncorrectParameterCast
  */
-function notEqualsCriteria(string $field, $value): CriteriaInterface
+function notEqualsCriteria(string $field, float|int|object|string $value): CriteriaInterface
 {
     if (\is_object($value))
     {
@@ -309,6 +336,8 @@ function queryBuilder(EngineInterface $engine = null): QueryFactory
 
 /**
  * Create select query (for PostgreSQL).
+ *
+ * @psalm-param non-empty-string $fromTable
  */
 function selectQuery(string $fromTable, string ...$columns): LatitudeQuery\SelectQuery
 {
@@ -318,13 +347,12 @@ function selectQuery(string $fromTable, string ...$columns): LatitudeQuery\Selec
 /**
  * Create update query (for PostgreSQL).
  *
- * @psalm-param array<string, mixed>|object $toUpdate
- *
- * @param array|object                      $toUpdate
+ * @psalm-param non-empty-string                      $tableName
+ * @psalm-param array<non-empty-string, mixed>|object $toUpdate
  *
  * @throws \ServiceBus\Storage\Common\Exceptions\IncorrectParameterCast
  */
-function updateQuery(string $tableName, $toUpdate): LatitudeQuery\UpdateQuery
+function updateQuery(string $tableName, array|object $toUpdate): LatitudeQuery\UpdateQuery
 {
     $values = \is_object($toUpdate) ? castObjectToArray($toUpdate) : $toUpdate;
 
@@ -333,6 +361,8 @@ function updateQuery(string $tableName, $toUpdate): LatitudeQuery\UpdateQuery
 
 /**
  * Create delete query (for PostgreSQL).
+ *
+ * @psalm-param non-empty-string $fromTable
  */
 function deleteQuery(string $fromTable): LatitudeQuery\DeleteQuery
 {
@@ -342,13 +372,12 @@ function deleteQuery(string $fromTable): LatitudeQuery\DeleteQuery
 /**
  * Create insert query (for PostgreSQL).
  *
- * @psalm-param array<string, mixed>|object $toInsert
- *
- * @param array|object                      $toInsert
+ * @psalm-param non-empty-string                      $toTable
+ * @psalm-param array<non-empty-string, mixed>|object $toInsert
  *
  * @throws \ServiceBus\Storage\Common\Exceptions\IncorrectParameterCast
  */
-function insertQuery(string $toTable, $toInsert): LatitudeQuery\InsertQuery
+function insertQuery(string $toTable, array|object $toInsert): LatitudeQuery\InsertQuery
 {
     $rows = \is_object($toInsert) ? castObjectToArray($toInsert) : $toInsert;
 
@@ -382,11 +411,11 @@ function castObjectToArray(object $object): array
  *
  * @internal
  *
- * @psalm-return array<string, float|int|object|string|null>
+ * @psalm-return array<non-empty-string, float|int|object|string|null>
  */
 function getObjectVars(object $object): array
 {
-    /** @var \Closure $closure */
+    /** @psalm-var \Closure():array<non-empty-string, float|int|object|string|null> $closure */
     $closure = \Closure::bind(
         function (): array
         {
@@ -397,18 +426,15 @@ function getObjectVars(object $object): array
         $object
     );
 
-    /**
-     * @psalm-var array<string, float|int|object|string|null> $vars
-     *
-     * @var array                                             $vars
-     */
-    $vars = $closure();
-
-    return $vars;
+    return $closure();
 }
 
 /**
  * @internal
+ *
+ * @psalm-param non-empty-string $string
+ *
+ * @psalm-return non-empty-string
  *
  * Convert string from lowerCamelCase to snake_case
  */
@@ -418,8 +444,10 @@ function toSnakeCase(string $string): string
 
     if (\is_string($replaced))
     {
-        return \strtolower($replaced);
+        $string = \strtolower($replaced);
     }
+
+    /** @psalm-var non-empty-string $string */
 
     return $string;
 }
@@ -427,11 +455,7 @@ function toSnakeCase(string $string): string
 /**
  * @internal
  *
- * @param float|int|object|string|null $value
- *
  * @throws \ServiceBus\Storage\Common\Exceptions\IncorrectParameterCast
- *
- * @return float|int|string|null
  */
 function cast(float|int|object|string|null $value): float|int|string|null
 {

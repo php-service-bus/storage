@@ -22,7 +22,7 @@ interface Transaction extends QueryExecutor, BinaryDataDecoder
     /**
      * Commit transaction.
      *
-     * @return Promise<void>
+     * @psalm-return Promise<void>
      *
      * @throws \ServiceBus\Storage\Common\Exceptions\ConnectionFailed
      * @throws \ServiceBus\Storage\Common\Exceptions\UniqueConstraintViolationCheckFailed
@@ -33,7 +33,7 @@ interface Transaction extends QueryExecutor, BinaryDataDecoder
     /**
      * Rollback transaction.
      *
-     * @return Promise<void>
+     * @psalm-return Promise<void>
      *
      * @throws \ServiceBus\Storage\Common\Exceptions\ConnectionFailed
      * @throws \ServiceBus\Storage\Common\Exceptions\StorageInteractingFailed

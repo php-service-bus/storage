@@ -76,7 +76,7 @@ final class DoctrineDBALResultSetTest extends TestCase
                 );
 
                 self::assertNotEmpty($result);
-                self:: assertSame(['id' => 'uuid2', 'value' => 'value2'], $result);
+                self::assertSame(['id' => 'uuid2', 'value' => 'value2'], $result);
 
                 $result = yield fetchOne(
                     yield $this->adapter->execute('SELECT * FROM test_result_set WHERE id = \'uuid4\'')

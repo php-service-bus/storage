@@ -23,7 +23,7 @@ interface ResultSet
      * Succeeds with true if an emitted value is available by calling getCurrent() or false if the iterator has
      * resolved. If the iterator fails, the returned promise will fail with the same exception.
      *
-     * @return Promise<bool>
+     * @psalm-return Promise<bool>
      *
      * @throws \ServiceBus\Storage\Common\Exceptions\ResultSetIterationFailed
      */
@@ -33,16 +33,16 @@ interface ResultSet
      * Gets the last emitted value or throws an exception if the iterator has completed.
      * Returns value emitted from the iterator.
      *
-     * @throws \ServiceBus\Storage\Common\Exceptions\ResultSetIterationFailed
-     *
      * @psalm-return array<string, float|int|resource|string|null>|null
+     *
+     * @throws \ServiceBus\Storage\Common\Exceptions\ResultSetIterationFailed
      */
     public function getCurrent(): ?array;
 
     /**
      * Receive last insert id.
      *
-     * @return Promise<int|string|null>
+     * @psalm-return Promise<int|string|null>
      *
      * @throws \ServiceBus\Storage\Common\Exceptions\ResultSetIterationFailed
      */

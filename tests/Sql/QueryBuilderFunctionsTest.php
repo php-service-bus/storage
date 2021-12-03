@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace ServiceBus\Storage\Tests\Sql;
 
 use PHPUnit\Framework\TestCase;
+use function Latitude\QueryBuilder\criteria;
 use function ServiceBus\Storage\Sql\buildQuery;
 use function ServiceBus\Storage\Sql\cast;
 use function ServiceBus\Storage\Sql\deleteQuery;
@@ -35,23 +36,23 @@ final class QueryBuilderFunctionsTest extends TestCase
      */
     public function buildQuery(): void
     {
-        $parts = buildQuery(
-            selectQuery('table_name'),
-            [equalsCriteria('id', 100), notEqualsCriteria('id', 200)],
-            ['title' => 'desc'],
-            100
+        $queryData = buildQuery(
+            queryBuilder: selectQuery('table_name'),
+            criteria: [equalsCriteria('id', 100), notEqualsCriteria('id', 200)],
+            orderBy: ['title' => 'desc'],
+            limit: 100
         );
 
-        self::assertCount(2, $parts);
-        self::assertArrayHasKey(0, $parts);
-        self::assertArrayHasKey(1, $parts);
+        self::assertCount(2, $queryData);
+        self::assertArrayHasKey('query', $queryData);
+        self::assertArrayHasKey('parameters', $queryData);
 
         self::assertSame(
             'SELECT * FROM "table_name" WHERE "id" = ? AND "id" != ? ORDER BY "title" DESC LIMIT 100',
-            $parts[0]
+            $queryData['query']
         );
 
-        self::assertSame([100, 200], $parts[1]);
+        self::assertSame([100, 200], $queryData['parameters']);
     }
 
     /**
@@ -104,7 +105,7 @@ final class QueryBuilderFunctionsTest extends TestCase
      */
     public function insertQueryFromObject(): void
     {
-        $object = new class('qwerty', 'root')
+        $object = new class ('qwerty', 'root')
         {
             private $first;
 
@@ -179,7 +180,7 @@ final class QueryBuilderFunctionsTest extends TestCase
      */
     public function castObjectWithToString(): void
     {
-        $object = new class()
+        $object = new class ()
         {
             public function __toString()
             {
@@ -195,7 +196,7 @@ final class QueryBuilderFunctionsTest extends TestCase
      */
     public function objectNotEqualsCriteria(): void
     {
-        $object = new class()
+        $object = new class ()
         {
             /** @var string */
             private $id;

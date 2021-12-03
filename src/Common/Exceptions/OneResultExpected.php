@@ -12,9 +12,6 @@ declare(strict_types=0);
 
 namespace ServiceBus\Storage\Common\Exceptions;
 
-/**
- *
- */
 final class OneResultExpected extends \LogicException implements StorageExceptionMarker
 {
 }

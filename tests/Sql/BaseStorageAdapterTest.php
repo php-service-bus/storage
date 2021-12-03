@@ -22,6 +22,7 @@ use ServiceBus\Storage\Common\Exceptions\OneResultExpected;
 use ServiceBus\Storage\Common\Exceptions\StorageInteractingFailed;
 use ServiceBus\Storage\Common\Exceptions\UniqueConstraintViolationCheckFailed;
 use function Amp\Promise\wait;
+use function Latitude\QueryBuilder\criteria;
 use function ServiceBus\Storage\Sql\equalsCriteria;
 use function ServiceBus\Storage\Sql\fetchAll;
 use function ServiceBus\Storage\Sql\fetchOne;
@@ -83,9 +84,9 @@ abstract class BaseStorageAdapterTest extends TestCase
 
                 /** @var \ServiceBus\Storage\Common\ResultSet $iterator */
                 $iterator = yield find(
-                    $adapter,
-                    'storage_test_table',
-                    [equalsCriteria('id', '77961031-fd0f-4946-b439-dfc2902b961a')]
+                    queryExecutor: $adapter,
+                    tableName: 'storage_test_table',
+                    criteria: [equalsCriteria('id', '77961031-fd0f-4946-b439-dfc2902b961a')]
                 );
 
                 $result = yield fetchAll($iterator);
@@ -118,9 +119,9 @@ abstract class BaseStorageAdapterTest extends TestCase
 
                 /** @var \ServiceBus\Storage\Common\ResultSet $iterator */
                 $iterator = yield find(
-                    $adapter,
-                    'storage_test_table',
-                    [equalsCriteria('id', '77961031-fd0f-4946-b439-dfc2902b961a')]
+                    queryExecutor: $adapter,
+                    tableName: 'storage_test_table',
+                    criteria: [equalsCriteria('id', '77961031-fd0f-4946-b439-dfc2902b961a')]
                 );
 
                 $result = yield fetchAll($iterator);
@@ -159,7 +160,10 @@ abstract class BaseStorageAdapterTest extends TestCase
         Loop::run(
             static function (): \Generator
             {
-                yield find(static::getAdapter(), 'asegfseg');
+                yield find(
+                    queryExecutor: static::getAdapter(),
+                    tableName: 'asegfseg'
+                );
             }
         );
     }
@@ -295,7 +299,7 @@ abstract class BaseStorageAdapterTest extends TestCase
                 static::assertSame(0, $result);
 
                 /** @var \ServiceBus\Storage\Common\ResultSet $result */
-                $result = yield  $adapter->execute(
+                $result = yield $adapter->execute(
                     'SELECT * FROM storage_test_table where id = \'77961031-fd0f-4946-b439-dfc2902b961d\''
                 );
 

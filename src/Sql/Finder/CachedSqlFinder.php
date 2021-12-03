@@ -31,6 +31,8 @@ final class CachedSqlFinder implements SqlFinder
     /**
      * Table name.
      *
+     * @psalm-var non-empty-string
+     *
      * @var string
      */
     private $collectionName;
@@ -45,14 +47,20 @@ final class CachedSqlFinder implements SqlFinder
      */
     private $cacheAdapter;
 
-    public function __construct(string $collectionName, DatabaseAdapter $databaseAdapter, ?CacheAdapter $cacheAdapter = null)
-    {
+    /**
+     * @psalm-param non-empty-string $collectionName
+     */
+    public function __construct(
+        string          $collectionName,
+        DatabaseAdapter $databaseAdapter,
+        ?CacheAdapter   $cacheAdapter = null
+    ) {
         $this->collectionName  = $collectionName;
         $this->databaseAdapter = $databaseAdapter;
         $this->cacheAdapter    = $cacheAdapter ?? new InMemoryCacheAdapter();
     }
 
-    public function findOneById($id): Promise
+    public function findOneById(string|int $id): Promise
     {
         return $this->findOneBy([equalsCriteria('id', $id)]);
     }
@@ -62,20 +70,18 @@ final class CachedSqlFinder implements SqlFinder
         return call(
             function () use ($criteria): \Generator
             {
-                /**
-                 * @psalm-var string $sql
-                 * @psalm-var array<string, string|int|float|null> $parameters
-                 * @psalm-var string $cacheKey
-                 */
-                [$sql, $parameters, $cacheKey] = self::doPrepare($this->collectionName, $criteria, null, []);
+                $queryData = self::doPrepare(
+                    collectionName: $this->collectionName,
+                    criteria: $criteria
+                );
 
                 /** @var bool $hasEntry */
-                $hasEntry = yield $this->cacheAdapter->has($cacheKey);
+                $hasEntry = yield $this->cacheAdapter->has($queryData['cacheKey']);
 
                 if ($hasEntry === false)
                 {
                     /** @var \ServiceBus\Storage\Common\ResultSet $resultSet */
-                    $resultSet = yield $this->databaseAdapter->execute($sql, $parameters);
+                    $resultSet = yield $this->databaseAdapter->execute($queryData['query'], $queryData['parameters']);
 
                     /** @var array|null $data */
                     $data = yield fetchOne($resultSet);
@@ -84,37 +90,38 @@ final class CachedSqlFinder implements SqlFinder
 
                     if ($data !== null)
                     {
-                        yield $this->cacheAdapter->save($cacheKey, $data);
+                        yield $this->cacheAdapter->save($queryData['cacheKey'], $data);
                     }
                 }
 
                 /** @var array $data */
-                $data = yield $this->cacheAdapter->get($cacheKey);
+                $data = yield $this->cacheAdapter->get($queryData['cacheKey']);
 
                 return $data;
             }
         );
     }
 
-    public function find(array $criteria, ?int $limit = null, array $orderBy = []): Promise
+    public function find(array $criteria, ?int $offset, ?int $limit = null, ?array $orderBy = null): Promise
     {
         return call(
-            function () use ($criteria, $limit, $orderBy): \Generator
+            function () use ($criteria, $offset, $limit, $orderBy): \Generator
             {
-                /**
-                 * @psalm-var string $sql
-                 * @psalm-var array<string, string|int|float|null> $parameters
-                 * @psalm-var string $cacheKey
-                 */
-                [$sql, $parameters, $cacheKey] = self::doPrepare($this->collectionName, $criteria, $limit, $orderBy);
+                $queryData = self::doPrepare(
+                    collectionName: $this->collectionName,
+                    criteria: $criteria,
+                    offset: $offset,
+                    limit: $limit,
+                    orderBy: $orderBy
+                );
 
                 /** @var bool $hasEntry */
-                $hasEntry = yield $this->cacheAdapter->has($cacheKey);
+                $hasEntry = yield $this->cacheAdapter->has($queryData['cacheKey']);
 
                 if ($hasEntry === false)
                 {
                     /** @var \ServiceBus\Storage\Common\ResultSet $resultSet */
-                    $resultSet = yield $this->databaseAdapter->execute($sql, $parameters);
+                    $resultSet = yield $this->databaseAdapter->execute($queryData['query'], $queryData['parameters']);
 
                     /** @var array|null $data */
                     $data = yield fetchAll($resultSet);
@@ -124,11 +131,11 @@ final class CachedSqlFinder implements SqlFinder
                         return [];
                     }
 
-                    yield $this->cacheAdapter->save($cacheKey, $data);
+                    yield $this->cacheAdapter->save($queryData['cacheKey'], $data);
                 }
 
                 /** @var array $data */
-                $data = yield $this->cacheAdapter->get($cacheKey);
+                $data = yield $this->cacheAdapter->get($queryData['cacheKey']);
 
                 return $data;
             }
@@ -136,24 +143,39 @@ final class CachedSqlFinder implements SqlFinder
     }
 
     /**
+     * @psalm-param non-empty-string                                       $collectionName
      * @psalm-param array<mixed, \Latitude\QueryBuilder\CriteriaInterface> $criteria
-     * @psalm-param array<string, string>                                  $orderBy
+     * @psalm-param array<non-empty-string, non-empty-string>|null         $orderBy
+     * @psalm-param positive-int|null                                      $limit
      *
-     * @param \Latitude\QueryBuilder\CriteriaInterface[] $criteria
-     *
-     * @return array array 0 - SQL query; 1 - query parameters; 2 - cache key
+     * @psalm-return array{
+     *     cacheKey:non-empty-string,
+     *     query:non-empty-string,
+     *     parameters: array<array-key, string|int|float|null>
+     * }
      */
-    private static function doPrepare(string $collectionName, array $criteria, ?int $limit, array $orderBy): array
-    {
-        $query = buildQuery(
-            selectQuery($collectionName),
-            $criteria,
-            $orderBy,
-            $limit
+    private static function doPrepare(
+        string $collectionName,
+        array  $criteria,
+        ?int   $offset = null,
+        ?int   $limit = null,
+        ?array $orderBy = null
+    ): array {
+        $queryData = buildQuery(
+            queryBuilder: selectQuery($collectionName),
+            criteria: $criteria,
+            orderBy: $orderBy,
+            offset: $offset,
+            limit: $limit
         );
 
-        $query[] = \sha1(\serialize($query));
+        /** @psalm-var non-empty-string $cacheKey */
+        $cacheKey = \sha1(\serialize($queryData));
 
-        return $query;
+        return [
+            'cacheKey'   => $cacheKey,
+            'query'      => $queryData['query'],
+            'parameters' => $queryData['parameters']
+        ];
     }
 }

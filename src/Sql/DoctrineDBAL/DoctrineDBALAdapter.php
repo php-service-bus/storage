@@ -25,8 +25,9 @@ use function Amp\call;
 
 /**
  * DoctrineDBAL adapter.
- *
  * Designed primarily for testing. Please do not use this adapter in your code
+ *
+ * @internal
  */
 final class DoctrineDBALAdapter implements DatabaseAdapter
 {

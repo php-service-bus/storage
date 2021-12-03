@@ -25,9 +25,6 @@ use function ServiceBus\Common\readReflectionPropertyValue;
  */
 final class SqlMigrationProcessor
 {
-    private const DIRECTION_UP   = 'up';
-    private const DIRECTION_DOWN = 'down';
-
     /**
      * @var DatabaseAdapter
      */
@@ -51,7 +48,7 @@ final class SqlMigrationProcessor
     }
 
     /**
-     * @return Promise<int>
+     * @psalm-return Promise<int>
      *
      * @throws \RuntimeException Incorrect migration file
      * @throws \ServiceBus\Storage\Common\Exceptions\InvalidConfigurationOptions
@@ -61,11 +58,11 @@ final class SqlMigrationProcessor
      */
     public function up(): Promise
     {
-        return $this->process(self::DIRECTION_UP);
+        return $this->process(MigrationType::UP);
     }
 
     /**
-     * @return Promise<int>
+     * @psalm-return Promise<int>
      *
      * @throws \RuntimeException Incorrect migration file
      * @throws \ServiceBus\Storage\Common\Exceptions\InvalidConfigurationOptions
@@ -75,18 +72,18 @@ final class SqlMigrationProcessor
      */
     public function down(): Promise
     {
-        return $this->process(self::DIRECTION_DOWN);
+        return $this->process(MigrationType::DOWN);
     }
 
     /**
      * Performing migrations in a given direction (up / down)
      *
-     * @return Promise<int>
+     * @psalm-return Promise<int>
      */
-    private function process(string $direction): Promise
+    private function process(MigrationType $type): Promise
     {
         return call(
-            function () use ($direction): \Generator
+            function () use ($type): \Generator
             {
                 /** @var \ServiceBus\Storage\Common\Transaction $transaction */
                 $transaction = yield $this->storage->transaction();
@@ -118,7 +115,7 @@ final class SqlMigrationProcessor
                             [$version]
                         );
 
-                        /** Миграция была добавлена ранее */
+                        /** Migration was added earlier */
                         if ($resultSet->affectedRows() === 0)
                         {
                             $this->logger->debug('Skip "{version}" migration', ['version' => $version]);
@@ -126,18 +123,20 @@ final class SqlMigrationProcessor
                             continue;
                         }
 
-                        invokeReflectionMethod($migration, $direction);
+                        invokeReflectionMethod($migration, \strtolower($type->name));
 
-                        /** @var string[] $queries */
+                        /** @psalm-var array<array-key, non-empty-string> $queries */
                         $queries = readReflectionPropertyValue($migration, 'queries');
 
-                        /** @var array $parameters */
+                        /** @psalm-var array<non-empty-string, array<array-key, string|int|float|null>> $parameters */
                         $parameters = readReflectionPropertyValue($migration, 'params');
 
                         foreach ($queries as $query)
                         {
-                            /** @psalm-var array<array-key, string|int|float|null> $queryParameters */
-                            $queryParameters = $parameters[\sha1($query)] ?? [];
+                            /** @psalm-var non-empty-string $queryParametersKey */
+                            $queryParametersKey = \sha1($query);
+
+                            $queryParameters = $parameters[$queryParametersKey] ?? [];
 
                             yield $transaction->execute($query, $queryParameters);
 

@@ -15,21 +15,19 @@ namespace ServiceBus\Storage\Sql\Migration;
 use Amp\Promise;
 use function Amp\call;
 use function Amp\File\listFiles;
+use function ServiceBus\Common\createWithoutConstructor;
 
-/**
- *
- */
 final class SqlMigrationLoader
 {
     /**
+     * @psalm-var non-empty-string
+     *
      * @var string
      */
     private $directory;
 
     /**
-     * SqlMigrationLoader constructor.
-     *
-     * @param string $directory
+     * @psalm-param non-empty-string $directory
      */
     public function __construct(string $directory)
     {
@@ -39,7 +37,7 @@ final class SqlMigrationLoader
     /**
      * Creating migration objects and sorting versions
      *
-     * @return Promise<array<string, \ServiceBus\Storage\Sql\Migration\Migration>>
+     * @psalm-return Promise<array<string, \ServiceBus\Storage\Sql\Migration\Migration>>
      */
     public function load(): Promise
     {
@@ -61,12 +59,11 @@ final class SqlMigrationLoader
                     $name    = $file->getBasename('.' . $file->getExtension());
                     $version = \substr($name, 7);
 
-                    /** @psalm-var class-string<Migration> $class */
+                    /** @psalm-var class-string<Migration>|class-string $class */
                     $class = \sprintf('\%s', $name);
 
-                    $migration = new $class();
+                    $migration = createWithoutConstructor($class);
 
-                    /** @psalm-suppress RedundantConditionGivenDocblockType */
                     if ($migration instanceof Migration)
                     {
                         $migrations[$version] = $migration;
@@ -83,7 +80,7 @@ final class SqlMigrationLoader
     /**
      * Getting list of migration files
      *
-     * @return Promise<\SplFileInfo[]>
+     * @psalm-return Promise<array<array-key, \SplFileInfo>>
      */
     private function loadFiles(): Promise
     {

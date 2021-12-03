@@ -22,7 +22,7 @@ interface DatabaseAdapter extends QueryExecutor, BinaryDataDecoder
     /**
      * Start transaction.
      *
-     * @return Promise<\ServiceBus\Storage\Common\Transaction>
+     * @psalm-return Promise<\ServiceBus\Storage\Common\Transaction>
      *
      * @throws \ServiceBus\Storage\Common\Exceptions\InvalidConfigurationOptions
      * @throws \ServiceBus\Storage\Common\Exceptions\ConnectionFailed
@@ -35,7 +35,7 @@ interface DatabaseAdapter extends QueryExecutor, BinaryDataDecoder
      *
      * @psalm-param callable(\ServiceBus\Storage\Common\QueryExecutor):\Generator $function
      *
-     * @return Promise<void>
+     * @psalm-return Promise<void>
      *
      * @throws \ServiceBus\Storage\Common\Exceptions\InvalidConfigurationOptions
      * @throws \ServiceBus\Storage\Common\Exceptions\ConnectionFailed

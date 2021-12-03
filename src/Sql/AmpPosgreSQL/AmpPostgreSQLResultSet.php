@@ -23,9 +23,6 @@ use ServiceBus\Storage\Common\Exceptions\ResultSetIterationFailed;
 use ServiceBus\Storage\Common\ResultSet;
 use function Amp\call;
 
-/**
- *
- */
 class AmpPostgreSQLResultSet implements ResultSet
 {
     /**
@@ -38,9 +35,6 @@ class AmpPostgreSQLResultSet implements ResultSet
      */
     private $advanceCalled = false;
 
-    /**
-     * @param Iterator|CommandResult|PooledResultSet $originalResultSet
-     */
     public function __construct(Iterator|CommandResult|PooledResultSet $originalResultSet)
     {
         $this->originalResultSet = $originalResultSet;

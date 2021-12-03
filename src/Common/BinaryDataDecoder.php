@@ -20,7 +20,7 @@ interface BinaryDataDecoder
     /**
      * Unescape binary string.
      *
-     * @param resource|string $payload
+     * @psalm-param resource|string $payload
      */
     public function unescapeBinary($payload): string;
 }
