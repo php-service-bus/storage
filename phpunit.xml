@@ -39,9 +39,4 @@
             <directory>./tests/</directory>
         </testsuite>
     </testsuites>
-    <groups>
-        <exclude>
-            <group>amphp</group>
-        </exclude>
-    </groups>
 </phpunit>

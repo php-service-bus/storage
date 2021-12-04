@@ -50,7 +50,7 @@ final class AmpPostgreSQLTransactionTest extends BaseTransactionTest
         $adapter = self::getAdapter();
 
         wait(
-            $adapter->execute('DROP TABLE test_result_set')
+            $adapter->execute('DROP TABLE IF EXISTS test_result_set')
         );
     }
 
