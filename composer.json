@@ -54,7 +54,7 @@
   "require-dev": {
     "php-service-bus/code-style-config": "v5.1.*",
     "phpunit/phpunit": "v9.5.*",
-    "vimeo/psalm": "v4.13.*",1
+    "vimeo/psalm": "v4.13.*",
     "phpstan/phpstan": "v1.2.*",
     "boesing/psalm-plugin-stringf": "v1.1.*"
   },
