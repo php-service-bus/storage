@@ -46,7 +46,7 @@
     "php-service-bus/cache": "v5.1.*",
     "amphp/postgres": "v1.4.*",
     "latitude/latitude": "v4.2.*",
-    "psr/log": "v3.0.*",
+    "psr/log": "v1.1.*",
     "doctrine/dbal": "v3.2.*",
     "symfony/dependency-injection": "v5.4.*",
     "amphp/file": "v2.0.*"
@@ -54,7 +54,7 @@
   "require-dev": {
     "php-service-bus/code-style-config": "v5.1.*",
     "phpunit/phpunit": "v9.5.*",
-    "vimeo/psalm": "v4.13.*",
+    "vimeo/psalm": "v4.13.*",1
     "phpstan/phpstan": "v1.2.*",
     "boesing/psalm-plugin-stringf": "v1.1.*"
   },
