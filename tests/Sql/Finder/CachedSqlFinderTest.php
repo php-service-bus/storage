@@ -10,7 +10,7 @@
  * @license https://opensource.org/licenses/MIT
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace ServiceBus\Storage\Tests\Sql\Finder;
 
@@ -69,7 +69,7 @@ final class CachedSqlFinderTest extends TestCase
     public function selectOne(): void
     {
         Loop::run(
-            static function(): \Generator
+            static function (): \Generator
             {
                 yield self::$adapter->execute(
                     'INSERT INTO qwerty(id, title) VALUES(?,?), (?,?)',
@@ -112,7 +112,7 @@ final class CachedSqlFinderTest extends TestCase
     public function selectAll(): void
     {
         Loop::run(
-            static function(): \Generator
+            static function (): \Generator
             {
                 yield self::$adapter->execute(
                     'INSERT INTO qwerty(id, title) VALUES(?,?), (?,?)',
