@@ -22,7 +22,6 @@ interface QueryExecutor
     /**
      * Execute query.
      *
-     * @psalm-param non-empty-string $queryString
      * @psalm-param array<array-key, string|int|float|null> $parameters
      *
      * @psalm-return Promise<\ServiceBus\Storage\Common\ResultSet>
