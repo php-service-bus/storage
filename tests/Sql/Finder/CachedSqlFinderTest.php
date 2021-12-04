@@ -10,7 +10,7 @@
  * @license https://opensource.org/licenses/MIT
  */
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace ServiceBus\Storage\Tests\Sql\Finder;
 
@@ -20,6 +20,7 @@ use ServiceBus\Cache\InMemory\InMemoryStorage;
 use ServiceBus\Storage\Common\DatabaseAdapter;
 use ServiceBus\Storage\Sql\Finder\CachedSqlFinder;
 use function Amp\Promise\wait;
+use function Latitude\QueryBuilder\criteria;
 use function ServiceBus\Common\uuid;
 use function ServiceBus\Storage\Sql\DoctrineDBAL\inMemoryAdapter;
 
@@ -68,7 +69,7 @@ final class CachedSqlFinderTest extends TestCase
     public function selectOne(): void
     {
         Loop::run(
-            static function (): \Generator
+            static function(): \Generator
             {
                 yield self::$adapter->execute(
                     'INSERT INTO qwerty(id, title) VALUES(?,?), (?,?)',
@@ -91,7 +92,7 @@ final class CachedSqlFinderTest extends TestCase
 
                 /** @noinspection PhpInternalEntityUsedInspection */
                 self::assertTrue(
-                    InMemoryStorage::instance()->has('6e1488a47d01310e8697f3e980935b2d4d2c8df3')
+                    InMemoryStorage::instance()->has('5b601b4ee0e739b9a3e13dbf08a5aa6c00898de4')
                 );
 
                 /** @var array $entry */
@@ -111,7 +112,7 @@ final class CachedSqlFinderTest extends TestCase
     public function selectAll(): void
     {
         Loop::run(
-            static function (): \Generator
+            static function(): \Generator
             {
                 yield self::$adapter->execute(
                     'INSERT INTO qwerty(id, title) VALUES(?,?), (?,?)',
@@ -121,7 +122,11 @@ final class CachedSqlFinderTest extends TestCase
                 $finder = new CachedSqlFinder('qwerty', self::$adapter);
 
                 /** @var array $rows */
-                $rows = yield $finder->find([], 100, ['id' => 'DESC']);
+                $rows = yield $finder->find(
+                    criteria: [],
+                    limit: 100,
+                    orderBy: ['id' => 'DESC']
+                );
 
                 self::assertCount(2, $rows);
 
@@ -129,11 +134,15 @@ final class CachedSqlFinderTest extends TestCase
 
                 /** @noinspection PhpInternalEntityUsedInspection */
                 self::assertTrue(
-                    InMemoryStorage::instance()->has('5c2a559f629ec7eb8cc42876c6fec726b3ab82f2')
+                    InMemoryStorage::instance()->has('eab2eef3f648338cde6ccef7ec84db4041ef6266')
                 );
 
                 /** @var array $rows */
-                $rows = yield $finder->find([], 100, ['id' => 'DESC']);
+                $rows = yield $finder->find(
+                    criteria: [],
+                    limit: 100,
+                    orderBy: ['id' => 'DESC']
+                );
 
                 self::assertCount(2, $rows);
             }

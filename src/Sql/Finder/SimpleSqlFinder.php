@@ -78,7 +78,7 @@ final class SimpleSqlFinder implements SqlFinder
         );
     }
 
-    public function find(array $criteria, ?int $offset, ?int $limit = null, ?array $orderBy = null): Promise
+    public function find(array $criteria, ?int $offset = null, ?int $limit = null, ?array $orderBy = null): Promise
     {
         return call(
             function () use ($criteria, $offset, $limit, $orderBy): \Generator

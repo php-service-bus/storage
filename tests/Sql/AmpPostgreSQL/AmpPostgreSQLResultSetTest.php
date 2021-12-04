@@ -24,7 +24,7 @@ use function ServiceBus\Storage\Sql\fetchAll;
 use function ServiceBus\Storage\Sql\fetchOne;
 
 /**
- *
+ * @group amphp
  */
 final class AmpPostgreSQLResultSetTest extends TestCase
 {

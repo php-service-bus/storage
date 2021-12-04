@@ -19,7 +19,7 @@ use ServiceBus\Storage\Common\DatabaseAdapter;
 use ServiceBus\Storage\Sql\Migration\SqlMigrationLoader;
 use ServiceBus\Storage\Sql\Migration\SqlMigrationProcessor;
 use function Amp\Promise\wait;
-use function ServiceBus\Storage\Sql\AmpPosgreSQL\postgreSqlAdapterFactory;
+use function ServiceBus\Storage\Sql\DoctrineDBAL\inMemoryAdapter;
 
 /**
  *
@@ -40,7 +40,7 @@ final class SqlMigrationProcessorTest extends TestCase
     {
         parent::setUp();
 
-        $this->storage            = postgreSqlAdapterFactory((string) \getenv('TEST_POSTGRES_DSN'));
+        $this->storage            = inMemoryAdapter();
         $this->migrationProcessor = new SqlMigrationProcessor(
             $this->storage,
             new SqlMigrationLoader(__DIR__ . '/stubs')

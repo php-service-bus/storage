@@ -25,7 +25,7 @@ use function Amp\Promise\wait;
 use function ServiceBus\Storage\Sql\DoctrineDBAL\inMemoryAdapter;
 
 /**
- *
+ * @group inmemory
  */
 final class DoctrineDBALAdapterTest extends BaseStorageAdapterTest
 {

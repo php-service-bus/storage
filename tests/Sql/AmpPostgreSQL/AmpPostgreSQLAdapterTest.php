@@ -24,7 +24,7 @@ use function Amp\Promise\wait;
 use function ServiceBus\Storage\Sql\AmpPosgreSQL\postgreSqlAdapterFactory;
 
 /**
- *
+ * @group amphp
  */
 final class AmpPostgreSQLAdapterTest extends BaseStorageAdapterTest
 {

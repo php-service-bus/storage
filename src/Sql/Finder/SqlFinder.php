@@ -61,5 +61,5 @@ interface SqlFinder
      * @throws \ServiceBus\Storage\Common\Exceptions\StorageInteractingFailed
      * @throws \ServiceBus\Storage\Common\Exceptions\ResultSetIterationFailed
      */
-    public function find(array $criteria, ?int $offset, ?int $limit = null, ?array $orderBy = null): Promise;
+    public function find(array $criteria, ?int $offset = null, ?int $limit = null, ?array $orderBy = null): Promise;
 }

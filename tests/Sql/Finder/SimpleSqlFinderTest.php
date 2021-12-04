@@ -10,7 +10,7 @@
  * @license https://opensource.org/licenses/MIT
  */
 
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace ServiceBus\Storage\Tests\Sql\Finder;
 
@@ -68,7 +68,7 @@ final class SimpleSqlFinderTest extends TestCase
     public function selectOne(): void
     {
         Loop::run(
-            static function (): \Generator
+            static function(): \Generator
             {
                 yield self::$adapter->execute(
                     'INSERT INTO qwerty(id, title) VALUES(?,?), (?,?)',
@@ -96,7 +96,7 @@ final class SimpleSqlFinderTest extends TestCase
     public function selectAll(): void
     {
         Loop::run(
-            static function (): \Generator
+            static function(): \Generator
             {
                 yield self::$adapter->execute(
                     'INSERT INTO qwerty(id, title) VALUES(?,?), (?,?)',
@@ -106,7 +106,11 @@ final class SimpleSqlFinderTest extends TestCase
                 $finder = new SimpleSqlFinder('qwerty', self::$adapter);
 
                 /** @var array $rows */
-                $rows = yield $finder->find([], 100, ['id' => 'DESC']);
+                $rows = yield $finder->find(
+                    criteria: [],
+                    limit: 100,
+                    orderBy: ['id' => 'DESC']
+                );
 
                 self::assertCount(2, $rows);
             }

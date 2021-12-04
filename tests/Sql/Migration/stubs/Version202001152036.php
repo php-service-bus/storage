@@ -19,7 +19,7 @@ final class Version202001152036 extends Migration
 {
     protected function up(): void
     {
-        $this->add('SELECT NOW()');
+        $this->add('SELECT date(\'now\')');
     }
 
     protected function down(): void
