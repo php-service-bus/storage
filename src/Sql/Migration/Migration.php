@@ -49,6 +49,22 @@ abstract class Migration
     abstract protected function down(): void;
 
     /**
+     * @psalm-return array<array-key, non-empty-string>
+     */
+    public function queries(): array
+    {
+        return $this->queries;
+    }
+
+    /**
+     * @psalm-return array<non-empty-string, array<array-key, string|int|float|null>>
+     */
+    public function parameters(): array
+    {
+        return $this->params;
+    }
+
+    /**
      * Close constructor
      *
      * @codeCoverageIgnore

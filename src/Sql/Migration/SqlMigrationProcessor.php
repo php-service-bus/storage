@@ -125,13 +125,9 @@ final class SqlMigrationProcessor
 
                         invokeReflectionMethod($migration, \strtolower($type->name));
 
-                        /** @psalm-var array<array-key, non-empty-string> $queries */
-                        $queries = readReflectionPropertyValue($migration, 'queries');
+                        $parameters = $migration->parameters();
 
-                        /** @psalm-var array<non-empty-string, array<array-key, string|int|float|null>> $parameters */
-                        $parameters = readReflectionPropertyValue($migration, 'params');
-
-                        foreach ($queries as $query)
+                        foreach ($migration->queries() as $query)
                         {
                             /** @psalm-var non-empty-string $queryParametersKey */
                             $queryParametersKey = \sha1($query);
