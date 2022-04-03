@@ -116,6 +116,7 @@ final class AmpPostgreSQLAdapter implements DatabaseAdapter
                     $generator = $function($transaction);
 
                     /** @psalm-suppress MixedArgumentTypeCoercion */
+                    /** @phpstan-ignore-next-line */
                     yield new Coroutine($generator);
 
                     yield $transaction->commit();
