@@ -12,6 +12,7 @@ declare(strict_types=0);
 
 namespace ServiceBus\Storage\Module;
 
+use Psr\Log\LoggerInterface;
 use ServiceBus\Common\Module\ServiceBusModule;
 use ServiceBus\Storage\Common\DatabaseAdapter;
 use ServiceBus\Storage\Common\StorageConfiguration;
@@ -100,7 +101,7 @@ final class SqlStorageModule implements ServiceBusModule
 
         if (true === $this->loggerEnabled)
         {
-            $adapterDefinitionParameters[] = new Reference('service_bus.logger');
+            $adapterDefinitionParameters[] = new Reference(LoggerInterface::class);
         }
 
         $adapterDefinition = new Definition($adapterClass, $adapterDefinitionParameters);
