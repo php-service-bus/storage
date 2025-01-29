@@ -24,7 +24,7 @@ use function ServiceBus\Storage\Sql\AmpPosgreSQL\postgreSqlAdapterFactory;
 /**
  * @group amphp
  */
-final class AmpPostgreSQLTransactionTestCase extends BaseTransactionTestCase
+final class AmpPostgreSQLTransactionTest extends BaseTransactionTestCase
 {
     /**
      * @var AmpPostgreSQLAdapter|null

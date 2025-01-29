@@ -27,7 +27,7 @@ use function ServiceBus\Storage\Sql\AmpPosgreSQL\postgreSqlAdapterFactory;
 /**
  * @group amphp
  */
-final class AmpPostgreSQLAdapterTestCase extends BaseStorageAdapterTestCase
+final class AmpPostgreSQLAdapterTest extends BaseStorageAdapterTestCase
 {
     /**
      * @var AmpPostgreSQLAdapter|null

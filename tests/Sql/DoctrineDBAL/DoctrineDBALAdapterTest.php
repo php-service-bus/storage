@@ -28,7 +28,7 @@ use function ServiceBus\Storage\Sql\DoctrineDBAL\inMemoryAdapter;
 /**
  * @group inmemory
  */
-final class DoctrineDBALAdapterTestCase extends BaseStorageAdapterTestCase
+final class DoctrineDBALAdapterTest extends BaseStorageAdapterTestCase
 {
     /**
      * @var DoctrineDBALAdapter|null
