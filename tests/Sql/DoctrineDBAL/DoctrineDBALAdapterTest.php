@@ -21,6 +21,7 @@ use ServiceBus\Storage\Common\Exceptions\StorageInteractingFailed;
 use ServiceBus\Storage\Common\StorageConfiguration;
 use ServiceBus\Storage\Sql\DoctrineDBAL\DoctrineDBALAdapter;
 use ServiceBus\Storage\Tests\Sql\BaseStorageAdapterTest;
+
 use function Amp\Promise\wait;
 use function ServiceBus\Storage\Sql\DoctrineDBAL\inMemoryAdapter;
 
@@ -36,8 +37,7 @@ final class DoctrineDBALAdapterTest extends BaseStorageAdapterTest
 
     protected static function getAdapter(): DatabaseAdapter
     {
-        if (false === isset(self::$adapter))
-        {
+        if (false === isset(self::$adapter)) {
             self::$adapter = inMemoryAdapter();
         }
 
@@ -61,8 +61,7 @@ final class DoctrineDBALAdapterTest extends BaseStorageAdapterTest
     public function lastInsertId(): void
     {
         Loop::run(
-            static function (): \Generator
-            {
+            static function (): \Generator {
                 $adapter = self::getAdapter();
 
                 /** @var \ServiceBus\Storage\Common\ResultSet $result */
@@ -86,8 +85,7 @@ final class DoctrineDBALAdapterTest extends BaseStorageAdapterTest
         $this->expectException(ConnectionFailed::class);
 
         Loop::run(
-            static function (): \Generator
-            {
+            static function (): \Generator {
                 $adapter = new DoctrineDBALAdapter(
                     new StorageConfiguration('pgsql://localhost:4486/foo?charset=UTF-8')
                 );
@@ -105,8 +103,7 @@ final class DoctrineDBALAdapterTest extends BaseStorageAdapterTest
         $this->expectException(StorageInteractingFailed::class);
 
         Loop::run(
-            static function (): \Generator
-            {
+            static function (): \Generator {
                 $adapter = new DoctrineDBALAdapter(
                     new StorageConfiguration('')
                 );

@@ -14,6 +14,7 @@ namespace ServiceBus\Storage\Sql\Finder;
 
 use Amp\Promise;
 use ServiceBus\Storage\Common\DatabaseAdapter;
+
 use function Amp\call;
 use function ServiceBus\Storage\Sql\equalsCriteria;
 use function ServiceBus\Storage\Sql\fetchAll;
@@ -56,8 +57,7 @@ final class SimpleSqlFinder implements SqlFinder
     public function findOneBy(array $criteria): Promise
     {
         return call(
-            function () use ($criteria): \Generator
-            {
+            function () use ($criteria): \Generator {
                 /** @var \ServiceBus\Storage\Common\ResultSet $resultSet */
                 $resultSet = yield find(
                     queryExecutor: $this->databaseAdapter,
@@ -68,8 +68,7 @@ final class SimpleSqlFinder implements SqlFinder
                 /** @var array|null $result */
                 $result = yield fetchOne($resultSet);
 
-                if (\is_array($result) && \count($result) !== 0)
-                {
+                if (\is_array($result) && \count($result) !== 0) {
                     return $result;
                 }
 
@@ -81,8 +80,7 @@ final class SimpleSqlFinder implements SqlFinder
     public function find(array $criteria, ?int $offset = null, ?int $limit = null, ?array $orderBy = null): Promise
     {
         return call(
-            function () use ($criteria, $offset, $limit, $orderBy): \Generator
-            {
+            function () use ($criteria, $offset, $limit, $orderBy): \Generator {
                 /** @var \ServiceBus\Storage\Common\ResultSet $resultSet */
                 $resultSet = yield find(
                     queryExecutor: $this->databaseAdapter,

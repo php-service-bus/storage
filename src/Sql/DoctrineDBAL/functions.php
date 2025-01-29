@@ -29,13 +29,11 @@ function adaptDbalThrowable(\Throwable $throwable): \Exception
 {
     $message = \str_replace(\PHP_EOL, '', $throwable->getMessage());
 
-    if ($throwable instanceof DoctrineDBALExceptions\ConnectionException)
-    {
+    if ($throwable instanceof DoctrineDBALExceptions\ConnectionException) {
         return new InternalExceptions\ConnectionFailed($message, (int) $throwable->getCode(), $throwable);
     }
 
-    if ($throwable instanceof DoctrineDBALExceptions\UniqueConstraintViolationException)
-    {
+    if ($throwable instanceof DoctrineDBALExceptions\UniqueConstraintViolationException) {
         return new InternalExceptions\UniqueConstraintViolationCheckFailed($message, (int) $throwable->getCode(), $throwable);
     }
 

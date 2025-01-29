@@ -18,6 +18,7 @@ use Amp\Loop;
 use PHPUnit\Framework\Constraint\IsType;
 use PHPUnit\Framework\TestCase;
 use ServiceBus\Storage\Sql\DoctrineDBAL\DoctrineDBALAdapter;
+
 use function Amp\Promise\wait;
 use function ServiceBus\Storage\Sql\DoctrineDBAL\inMemoryAdapter;
 use function ServiceBus\Storage\Sql\fetchAll;
@@ -61,8 +62,7 @@ final class DoctrineDBALResultSetTest extends TestCase
     public function fetchOne(): void
     {
         Loop::run(
-            function (): \Generator
-            {
+            function (): \Generator {
                 yield $this->adapter->execute(
                     'INSERT INTO test_result_set (id, value) VALUES (?,?), (?,?)',
                     [
@@ -93,8 +93,7 @@ final class DoctrineDBALResultSetTest extends TestCase
     public function fetchAll(): void
     {
         Loop::run(
-            function (): \Generator
-            {
+            function (): \Generator {
                 yield $this->adapter->execute(
                     'INSERT INTO test_result_set (id, value) VALUES (?,?), (?,?)',
                     [
@@ -117,8 +116,7 @@ final class DoctrineDBALResultSetTest extends TestCase
     public function fetchAllWithEmptySet(): void
     {
         Loop::run(
-            function (): \Generator
-            {
+            function (): \Generator {
                 $result = yield fetchAll(yield $this->adapter->execute('SELECT * FROM test_result_set'));
 
                 self::assertThat($result, new IsType('array'));
@@ -133,8 +131,7 @@ final class DoctrineDBALResultSetTest extends TestCase
     public function multipleGetCurrentRow(): void
     {
         Loop::run(
-            function (): \Generator
-            {
+            function (): \Generator {
                 yield $this->adapter->execute(
                     'INSERT INTO test_result_set (id, value) VALUES (?,?), (?,?)',
                     [
@@ -146,8 +143,7 @@ final class DoctrineDBALResultSetTest extends TestCase
                 /** @var \ServiceBus\Storage\Common\ResultSet $result */
                 $result = yield $this->adapter->execute('SELECT * FROM test_result_set');
 
-                while (yield $result->advance())
-                {
+                while (yield $result->advance()) {
                     $row     = $result->getCurrent();
                     $rowCopy = $result->getCurrent();
 

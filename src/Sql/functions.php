@@ -23,6 +23,7 @@ use ServiceBus\Storage\Common\Exceptions\IncorrectParameterCast;
 use ServiceBus\Storage\Common\Exceptions\OneResultExpected;
 use ServiceBus\Storage\Common\QueryExecutor;
 use ServiceBus\Storage\Common\ResultSet;
+
 use function Amp\call;
 use function Latitude\QueryBuilder\field;
 
@@ -37,16 +38,13 @@ use function Latitude\QueryBuilder\field;
 function fetchAll(ResultSet $iterator): Promise
 {
     return call(
-        static function () use ($iterator): \Generator
-        {
+        static function () use ($iterator): \Generator {
             $array = [];
 
-            while (yield $iterator->advance())
-            {
+            while (yield $iterator->advance()) {
                 $result = $iterator->getCurrent();
 
-                if ($result !== null)
-                {
+                if ($result !== null) {
                     $array[] = $result;
                 }
             }
@@ -69,19 +67,16 @@ function fetchAll(ResultSet $iterator): Promise
 function fetchOne(ResultSet $iterator): Promise
 {
     return call(
-        static function () use ($iterator): \Generator
-        {
+        static function () use ($iterator): \Generator {
             /** @var array $collection */
             $collection   = yield fetchAll($iterator);
             $resultsCount = \count($collection);
 
-            if ($resultsCount === 0 || $resultsCount === 1)
-            {
+            if ($resultsCount === 0 || $resultsCount === 1) {
                 /** @var array|bool $endElement */
                 $endElement = \end($collection);
 
-                if ($endElement !== false)
-                {
+                if ($endElement !== false) {
                     return $endElement;
                 }
 
@@ -108,8 +103,7 @@ function fetchOne(ResultSet $iterator): Promise
 function sequence(string $sequenceName, QueryExecutor $executor): Promise
 {
     return call(
-        static function () use ($sequenceName, $executor): \Generator
-        {
+        static function () use ($sequenceName, $executor): \Generator {
             /** @var \ServiceBus\Storage\Common\ResultSet $resultSet */
             $resultSet = yield $executor->execute(\sprintf('SELECT nextval(\'%s\')', $sequenceName));
 
@@ -149,8 +143,7 @@ function find(
     ?array        $orderBy = null
 ): Promise {
     return call(
-        static function () use ($queryExecutor, $tableName, $criteria, $offset, $limit, $orderBy): \Generator
-        {
+        static function () use ($queryExecutor, $tableName, $criteria, $offset, $limit, $orderBy): \Generator {
             $queryData = buildQuery(
                 queryBuilder: selectQuery($tableName),
                 criteria: $criteria,
@@ -181,8 +174,7 @@ function find(
 function remove(QueryExecutor $queryExecutor, string $tableName, array $criteria = []): Promise
 {
     return call(
-        static function () use ($queryExecutor, $tableName, $criteria): \Generator
-        {
+        static function () use ($queryExecutor, $tableName, $criteria): \Generator {
             $queryData = buildQuery(
                 queryBuilder: deleteQuery($tableName),
                 criteria: $criteria
@@ -222,30 +214,24 @@ function buildQuery(
 
     $isFirstCondition = true;
 
-    foreach ($criteria as $criteriaItem)
-    {
+    foreach ($criteria as $criteriaItem) {
         $methodName = $isFirstCondition ? 'where' : 'andWhere';
         $queryBuilder->{$methodName}($criteriaItem);
         $isFirstCondition = false;
     }
 
-    if ($queryBuilder instanceof LatitudeQuery\SelectQuery)
-    {
-        if ($orderBy !== null)
-        {
-            foreach ($orderBy as $column => $direction)
-            {
+    if ($queryBuilder instanceof LatitudeQuery\SelectQuery) {
+        if ($orderBy !== null) {
+            foreach ($orderBy as $column => $direction) {
                 $queryBuilder->orderBy($column, $direction);
             }
         }
 
-        if ($limit !== null)
-        {
+        if ($limit !== null) {
             $queryBuilder->limit($limit);
         }
 
-        if ($offset !== null)
-        {
+        if ($offset !== null) {
             $queryBuilder->offset($offset);
         }
     }
@@ -273,17 +259,13 @@ function buildQuery(
  */
 function unescapeBinary(QueryExecutor $queryExecutor, array|string $data): array|string
 {
-    if ($queryExecutor instanceof BinaryDataDecoder)
-    {
-        if (\is_array($data) === false)
-        {
+    if ($queryExecutor instanceof BinaryDataDecoder) {
+        if (\is_array($data) === false) {
             return $queryExecutor->unescapeBinary($data);
         }
 
-        foreach ($data as $key => $value)
-        {
-            if (empty($value) === false && \is_string($value))
-            {
+        foreach ($data as $key => $value) {
+            if (empty($value) === false && \is_string($value)) {
                 $data[$key] = $queryExecutor->unescapeBinary($value);
             }
         }
@@ -301,8 +283,7 @@ function unescapeBinary(QueryExecutor $queryExecutor, array|string $data): array
  */
 function equalsCriteria(string $field, float|int|object|string $value): CriteriaInterface
 {
-    if (\is_object($value))
-    {
+    if (\is_object($value)) {
         $value = castObjectToString($value);
     }
 
@@ -318,8 +299,7 @@ function equalsCriteria(string $field, float|int|object|string $value): Criteria
  */
 function notEqualsCriteria(string $field, float|int|object|string $value): CriteriaInterface
 {
-    if (\is_object($value))
-    {
+    if (\is_object($value)) {
         $value = castObjectToString($value);
     }
 
@@ -398,8 +378,7 @@ function castObjectToArray(object $object): array
     $result = [];
 
     /** @var float|int|object|string|null $value */
-    foreach (getObjectVars($object) as $key => $value)
-    {
+    foreach (getObjectVars($object) as $key => $value) {
         $result[toSnakeCase($key)] = cast($value);
     }
 
@@ -417,8 +396,7 @@ function getObjectVars(object $object): array
 {
     /** @psalm-var \Closure():array<non-empty-string, float|int|object|string|null> $closure */
     $closure = \Closure::bind(
-        function (): array
-        {
+        function (): array {
             /** @psalm-var object $this */
             return \get_object_vars($this);
         },
@@ -442,8 +420,7 @@ function toSnakeCase(string $string): string
 {
     $replaced = \preg_replace('/(?<!^)[A-Z]/', '_$0', $string);
 
-    if (\is_string($replaced))
-    {
+    if (\is_string($replaced)) {
         $string = \strtolower($replaced);
     }
 
@@ -459,8 +436,7 @@ function toSnakeCase(string $string): string
  */
 function cast(float|int|object|string|null $value): float|int|string|null
 {
-    if ($value === null || \is_scalar($value))
-    {
+    if ($value === null || \is_scalar($value)) {
         return $value;
     }
 
@@ -476,8 +452,7 @@ function cast(float|int|object|string|null $value): float|int|string|null
  */
 function castObjectToString(object $object): string
 {
-    if (\method_exists($object, '__toString'))
-    {
+    if (\method_exists($object, '__toString')) {
         return (string) $object;
     }
 

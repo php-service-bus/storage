@@ -16,6 +16,7 @@ namespace ServiceBus\Storage\Tests\Sql\Migration;
 
 use PHPUnit\Framework\TestCase;
 use ServiceBus\Storage\Sql\Migration\SqlMigrationLoader;
+
 use function Amp\Promise\wait;
 
 /**

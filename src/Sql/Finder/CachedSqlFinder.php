@@ -16,6 +16,7 @@ use Amp\Promise;
 use ServiceBus\Cache\CacheAdapter;
 use ServiceBus\Cache\InMemory\InMemoryCacheAdapter;
 use ServiceBus\Storage\Common\DatabaseAdapter;
+
 use function Amp\call;
 use function ServiceBus\Storage\Sql\buildQuery;
 use function ServiceBus\Storage\Sql\equalsCriteria;
@@ -68,8 +69,7 @@ final class CachedSqlFinder implements SqlFinder
     public function findOneBy(array $criteria): Promise
     {
         return call(
-            function () use ($criteria): \Generator
-            {
+            function () use ($criteria): \Generator {
                 $queryData = self::doPrepare(
                     collectionName: $this->collectionName,
                     criteria: $criteria
@@ -78,8 +78,7 @@ final class CachedSqlFinder implements SqlFinder
                 /** @var bool $hasEntry */
                 $hasEntry = yield $this->cacheAdapter->has($queryData['cacheKey']);
 
-                if ($hasEntry === false)
-                {
+                if ($hasEntry === false) {
                     /** @var \ServiceBus\Storage\Common\ResultSet $resultSet */
                     $resultSet = yield $this->databaseAdapter->execute($queryData['query'], $queryData['parameters']);
 
@@ -88,8 +87,7 @@ final class CachedSqlFinder implements SqlFinder
 
                     unset($resultSet);
 
-                    if ($data !== null)
-                    {
+                    if ($data !== null) {
                         yield $this->cacheAdapter->save($queryData['cacheKey'], $data);
                     }
                 }
@@ -105,8 +103,7 @@ final class CachedSqlFinder implements SqlFinder
     public function find(array $criteria, ?int $offset = null, ?int $limit = null, ?array $orderBy = null): Promise
     {
         return call(
-            function () use ($criteria, $offset, $limit, $orderBy): \Generator
-            {
+            function () use ($criteria, $offset, $limit, $orderBy): \Generator {
                 $queryData = self::doPrepare(
                     collectionName: $this->collectionName,
                     criteria: $criteria,
@@ -118,16 +115,14 @@ final class CachedSqlFinder implements SqlFinder
                 /** @var bool $hasEntry */
                 $hasEntry = yield $this->cacheAdapter->has($queryData['cacheKey']);
 
-                if ($hasEntry === false)
-                {
+                if ($hasEntry === false) {
                     /** @var \ServiceBus\Storage\Common\ResultSet $resultSet */
                     $resultSet = yield $this->databaseAdapter->execute($queryData['query'], $queryData['parameters']);
 
                     /** @var array|null $data */
                     $data = yield fetchAll($resultSet);
 
-                    if (\is_array($data) === false || \count($data) === 0)
-                    {
+                    if (\is_array($data) === false || \count($data) === 0) {
                         return [];
                     }
 

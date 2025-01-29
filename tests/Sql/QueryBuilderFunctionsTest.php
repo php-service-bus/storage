@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace ServiceBus\Storage\Tests\Sql;
 
 use PHPUnit\Framework\TestCase;
+
 use function Latitude\QueryBuilder\criteria;
 use function ServiceBus\Storage\Sql\buildQuery;
 use function ServiceBus\Storage\Sql\cast;
@@ -105,8 +106,7 @@ final class QueryBuilderFunctionsTest extends TestCase
      */
     public function insertQueryFromObject(): void
     {
-        $object = new class ('qwerty', 'root')
-        {
+        $object = new class ('qwerty', 'root') {
             private $first;
 
             private $second;
@@ -169,8 +169,7 @@ final class QueryBuilderFunctionsTest extends TestCase
         $this->expectExceptionMessage('"Closure" must implements "__toString" method');
 
         cast(
-            static function (): void
-            {
+            static function (): void {
             }
         );
     }
@@ -180,8 +179,7 @@ final class QueryBuilderFunctionsTest extends TestCase
      */
     public function castObjectWithToString(): void
     {
-        $object = new class ()
-        {
+        $object = new class () {
             public function __toString()
             {
                 return 'qwerty';
@@ -196,8 +194,7 @@ final class QueryBuilderFunctionsTest extends TestCase
      */
     public function objectNotEqualsCriteria(): void
     {
-        $object = new class ()
-        {
+        $object = new class () {
             /** @var string */
             private $id;
 

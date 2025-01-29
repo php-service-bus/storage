@@ -20,6 +20,7 @@ use ServiceBus\Storage\Common\Exceptions\ConnectionFailed;
 use ServiceBus\Storage\Common\StorageConfiguration;
 use ServiceBus\Storage\Sql\AmpPosgreSQL\AmpPostgreSQLAdapter;
 use ServiceBus\Storage\Tests\Sql\BaseStorageAdapterTest;
+
 use function Amp\Promise\wait;
 use function ServiceBus\Storage\Sql\AmpPosgreSQL\postgreSqlAdapterFactory;
 
@@ -48,13 +49,10 @@ final class AmpPostgreSQLAdapterTest extends BaseStorageAdapterTest
     {
         $adapter = self::getAdapter();
 
-        try
-        {
+        try {
             wait($adapter->execute('DROP TABLE storage_test_table'));
             wait($adapter->execute('DROP TABLE test_ai'));
-        }
-        catch (\Throwable)
-        {
+        } catch (\Throwable) {
         }
     }
 
@@ -69,8 +67,7 @@ final class AmpPostgreSQLAdapterTest extends BaseStorageAdapterTest
 
     protected static function getAdapter(): DatabaseAdapter
     {
-        if (isset(self::$adapter) === false)
-        {
+        if (isset(self::$adapter) === false) {
             self::$adapter = postgreSqlAdapterFactory((string) \getenv('TEST_POSTGRES_DSN'));
         }
 
@@ -83,8 +80,7 @@ final class AmpPostgreSQLAdapterTest extends BaseStorageAdapterTest
     public function lastInsertId(): void
     {
         Loop::run(
-            static function (): \Generator
-            {
+            static function (): \Generator {
                 $adapter = self::getAdapter();
 
                 /** @var \ServiceBus\Storage\Common\ResultSet $result */
@@ -108,8 +104,7 @@ final class AmpPostgreSQLAdapterTest extends BaseStorageAdapterTest
         $this->expectException(ConnectionFailed::class);
 
         Loop::run(
-            static function (): \Generator
-            {
+            static function (): \Generator {
                 $adapter = new AmpPostgreSQLAdapter(
                     new StorageConfiguration('qwerty')
                 );

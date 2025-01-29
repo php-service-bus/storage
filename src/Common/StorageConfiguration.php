@@ -135,16 +135,14 @@ final class StorageConfiguration
         $parsedDSN = \parse_url((string) $preparedDSN);
 
         // @codeCoverageIgnoreStart
-        if (\is_array($parsedDSN) === false)
-        {
+        if (\is_array($parsedDSN) === false) {
             throw new InvalidConfigurationOptions('Error while parsing connection DSN');
         }
         // @codeCoverageIgnoreEnd
 
         $queryString = 'charset=UTF-8';
 
-        if (!empty($parsedDSN['query']))
-        {
+        if (!empty($parsedDSN['query'])) {
             $queryString = $parsedDSN['query'];
         }
 

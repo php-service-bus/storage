@@ -18,6 +18,7 @@ use Amp\Loop;
 use PHPUnit\Framework\Constraint\IsType;
 use PHPUnit\Framework\TestCase;
 use ServiceBus\Storage\Sql\AmpPosgreSQL\AmpPostgreSQLAdapter;
+
 use function Amp\Promise\wait;
 use function ServiceBus\Storage\Sql\AmpPosgreSQL\postgreSqlAdapterFactory;
 use function ServiceBus\Storage\Sql\fetchAll;
@@ -50,14 +51,11 @@ final class AmpPostgreSQLResultSetTest extends TestCase
     {
         parent::tearDownAfterClass();
 
-        try
-        {
+        try {
             wait(
                 self::$adapter->execute('DROP TABLE test_result_set')
             );
-        }
-        catch (\Throwable)
-        {
+        } catch (\Throwable) {
         }
     }
 
@@ -76,8 +74,7 @@ final class AmpPostgreSQLResultSetTest extends TestCase
     public function fetchOne(): void
     {
         Loop::run(
-            static function (): \Generator
-            {
+            static function (): \Generator {
                 $uuid1 = '3b5f80dd-0d14-4f8e-9684-0320dc35d3fd';
                 $uuid2 = 'ad1278ad-031a-45e0-aa04-2a03e143d438';
 
@@ -115,8 +112,7 @@ final class AmpPostgreSQLResultSetTest extends TestCase
     public function fetchAll(): void
     {
         Loop::run(
-            static function (): \Generator
-            {
+            static function (): \Generator {
                 yield self::$adapter->execute(
                     'INSERT INTO test_result_set (id, value) VALUES (?,?), (?,?)',
                     [
@@ -139,8 +135,7 @@ final class AmpPostgreSQLResultSetTest extends TestCase
     public function fetchAllWithEmptySet(): void
     {
         Loop::run(
-            static function (): \Generator
-            {
+            static function (): \Generator {
                 $result = yield fetchAll(yield self::$adapter->execute('SELECT * FROM test_result_set'));
 
                 self::assertThat($result, new IsType('array'));
@@ -155,8 +150,7 @@ final class AmpPostgreSQLResultSetTest extends TestCase
     public function multipleGetCurrentRow(): void
     {
         Loop::run(
-            static function (): \Generator
-            {
+            static function (): \Generator {
                 yield self::$adapter->execute(
                     'INSERT INTO test_result_set (id, value) VALUES (?,?), (?,?)',
                     [
@@ -168,8 +162,7 @@ final class AmpPostgreSQLResultSetTest extends TestCase
                 /** @var \ServiceBus\Storage\Common\ResultSet $result */
                 $result = yield self::$adapter->execute('SELECT * FROM test_result_set');
 
-                while (yield $result->advance())
-                {
+                while (yield $result->advance()) {
                     $row     = $result->getCurrent();
                     $rowCopy = $result->getCurrent();
 
@@ -185,13 +178,11 @@ final class AmpPostgreSQLResultSetTest extends TestCase
     public function executeCommand(): void
     {
         Loop::run(
-            static function (): \Generator
-            {
+            static function (): \Generator {
                 /** @var \ServiceBus\Storage\Common\ResultSet $result */
                 $result = yield self::$adapter->execute('DELETE FROM test_result_set');
 
-                while (yield $result->advance())
-                {
+                while (yield $result->advance()) {
                     self::fail('Non empty cycle');
                 }
 

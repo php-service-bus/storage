@@ -34,8 +34,7 @@ abstract class Migration
      */
     final protected function add(string $query, array $params = []): void
     {
-        if ($query !== '')
-        {
+        if ($query !== '') {
             /**
              * @psalm-var non-empty-string $queryKey
              * @phpstan-ignore varTag.nativeType

@@ -13,6 +13,7 @@ declare(strict_types=0);
 namespace ServiceBus\Storage\Sql\Migration;
 
 use Amp\Promise;
+
 use function Amp\call;
 use function Amp\File\listFiles;
 use function ServiceBus\Common\createWithoutConstructor;
@@ -42,15 +43,13 @@ final class SqlMigrationLoader
     public function load(): Promise
     {
         return call(
-            function (): \Generator
-            {
+            function (): \Generator {
                 $migrations = [];
 
                 /** @var \SplFileInfo[] $files */
                 $files = yield $this->loadFiles();
 
-                foreach ($files as $file)
-                {
+                foreach ($files as $file) {
                     /**
                      * @psalm-suppress UnresolvableInclude
                      */
@@ -64,8 +63,7 @@ final class SqlMigrationLoader
 
                     $migration = createWithoutConstructor($class);
 
-                    if ($migration instanceof Migration)
-                    {
+                    if ($migration instanceof Migration) {
                         $migrations[$version] = $migration;
                     }
                 }
@@ -85,15 +83,13 @@ final class SqlMigrationLoader
     private function loadFiles(): Promise
     {
         return call(
-            function (): \Generator
-            {
+            function (): \Generator {
                 /** @var string[] $files */
                 $files = yield listFiles($this->directory);
 
                 return \array_filter(
                     \array_map(
-                        function (string $fileName): ?\SplFileInfo
-                        {
+                        function (string $fileName): ?\SplFileInfo {
                             return \str_contains($fileName, 'Version')
                                 ? new \SplFileInfo($this->directory . '/' . $fileName)
                                 : null;

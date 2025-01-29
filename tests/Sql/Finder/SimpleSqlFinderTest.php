@@ -19,6 +19,7 @@ use PHPUnit\Framework\TestCase;
 use ServiceBus\Cache\InMemory\InMemoryStorage;
 use ServiceBus\Storage\Common\DatabaseAdapter;
 use ServiceBus\Storage\Sql\Finder\SimpleSqlFinder;
+
 use function Amp\Promise\wait;
 use function ServiceBus\Common\uuid;
 use function ServiceBus\Storage\Sql\DoctrineDBAL\inMemoryAdapter;
@@ -68,8 +69,7 @@ final class SimpleSqlFinderTest extends TestCase
     public function selectOne(): void
     {
         Loop::run(
-            static function (): \Generator
-            {
+            static function (): \Generator {
                 yield self::$adapter->execute(
                     'INSERT INTO qwerty(id, title) VALUES(?,?), (?,?)',
                     [
@@ -96,8 +96,7 @@ final class SimpleSqlFinderTest extends TestCase
     public function selectAll(): void
     {
         Loop::run(
-            static function (): \Generator
-            {
+            static function (): \Generator {
                 yield self::$adapter->execute(
                     'INSERT INTO qwerty(id, title) VALUES(?,?), (?,?)',
                     [uuid(), 'test1', uuid(), 'test2']

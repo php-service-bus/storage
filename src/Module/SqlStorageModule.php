@@ -99,8 +99,7 @@ final class SqlStorageModule implements ServiceBusModule
 
         $adapterDefinitionParameters = [new Reference(StorageConfiguration::class)];
 
-        if (true === $this->loggerEnabled)
-        {
+        if (true === $this->loggerEnabled) {
             $adapterDefinitionParameters[] = new Reference(LoggerInterface::class);
         }
 

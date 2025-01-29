@@ -26,6 +26,7 @@ use Psr\Log\NullLogger;
 use ServiceBus\Storage\Common\DatabaseAdapter;
 use ServiceBus\Storage\Common\Exceptions\InvalidConfigurationOptions;
 use ServiceBus\Storage\Common\StorageConfiguration;
+
 use function Amp\call;
 use function Amp\Postgres\connector;
 
@@ -61,8 +62,7 @@ final class AmpPostgreSQLAdapter implements DatabaseAdapter
     public function __construct(StorageConfiguration $configuration, ?LoggerInterface $logger = null)
     {
         // @codeCoverageIgnoreStart
-        if (\extension_loaded('pgsql') === false)
-        {
+        if (\extension_loaded('pgsql') === false) {
             throw new InvalidConfigurationOptions('ext-pgsql must be installed');
         }
         // @codeCoverageIgnoreEnd
@@ -79,19 +79,15 @@ final class AmpPostgreSQLAdapter implements DatabaseAdapter
     public function execute(string $queryString, array $parameters = []): Promise
     {
         return call(
-            function () use ($queryString, $parameters): \Generator
-            {
-                try
-                {
+            function () use ($queryString, $parameters): \Generator {
+                try {
                     $this->logger->debug($queryString, $parameters);
 
                     /** @var Iterator|CommandResult|PooledResultSet $resultSet */
                     $resultSet = yield $this->pool()->execute($queryString, $parameters);
 
                     return new AmpPostgreSQLResultSet($resultSet);
-                }
-                catch (\Throwable $throwable)
-                {
+                } catch (\Throwable $throwable) {
                     throw adaptAmpThrowable($throwable);
                 }
             }
@@ -101,8 +97,7 @@ final class AmpPostgreSQLAdapter implements DatabaseAdapter
     public function transactional(callable $function): Promise
     {
         return call(
-            function () use ($function): \Generator
-            {
+            function () use ($function): \Generator {
                 /** @var \Amp\Postgres\Transaction $originalTransaction */
                 $originalTransaction = yield $this->pool()->beginTransaction();
 
@@ -110,8 +105,7 @@ final class AmpPostgreSQLAdapter implements DatabaseAdapter
 
                 $this->logger->debug('BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED');
 
-                try
-                {
+                try {
                     /** @var \Generator $generator */
                     $generator = $function($transaction);
 
@@ -120,15 +114,11 @@ final class AmpPostgreSQLAdapter implements DatabaseAdapter
                     yield new Coroutine($generator);
 
                     yield $transaction->commit();
-                }
-                catch (\Throwable $throwable)
-                {
+                } catch (\Throwable $throwable) {
                     yield $transaction->rollback();
 
                     throw $throwable;
-                }
-                finally
-                {
+                } finally {
                     unset($transaction);
                 }
             }
@@ -138,10 +128,8 @@ final class AmpPostgreSQLAdapter implements DatabaseAdapter
     public function transaction(): Promise
     {
         return call(
-            function (): \Generator
-            {
-                try
-                {
+            function (): \Generator {
+                try {
                     $this->logger->debug('BEGIN TRANSACTION ISOLATION LEVEL READ COMMITTED');
 
                     /** @var \Amp\Postgres\Transaction $transaction */
@@ -150,8 +138,7 @@ final class AmpPostgreSQLAdapter implements DatabaseAdapter
                     return new AmpPostgreSQLTransaction($transaction, $this->logger);
                 }
                 // @codeCoverageIgnoreStart
-                catch (\Throwable $throwable)
-                {
+                catch (\Throwable $throwable) {
                     throw adaptAmpThrowable($throwable);
                 }
                 // @codeCoverageIgnoreEnd
@@ -161,8 +148,7 @@ final class AmpPostgreSQLAdapter implements DatabaseAdapter
 
     public function unescapeBinary($payload): string
     {
-        if (\is_resource($payload))
-        {
+        if (\is_resource($payload)) {
             $payload = \stream_get_contents($payload, -1, 0);
         }
 
@@ -174,8 +160,7 @@ final class AmpPostgreSQLAdapter implements DatabaseAdapter
      */
     private function pool(): Pool
     {
-        if ($this->pool === null)
-        {
+        if ($this->pool === null) {
             $queryData = $this->configuration->queryParameters;
 
             $this->pool = new Pool(

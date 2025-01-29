@@ -21,6 +21,7 @@ use Psr\Log\NullLogger;
 use ServiceBus\Storage\Common\DatabaseAdapter;
 use ServiceBus\Storage\Common\Exceptions\InvalidConfigurationOptions;
 use ServiceBus\Storage\Common\StorageConfiguration;
+
 use function Amp\call;
 
 /**
@@ -56,19 +57,12 @@ final class DoctrineDBALAdapter implements DatabaseAdapter
     {
         $this->logger->debug($queryString, $parameters);
 
-        try
-        {
+        try {
             $statement = $this->connection()->prepare($queryString);
-            foreach ($parameters as $key => $value) {
-                $statement->bindValue($key, $value);
-            }
-
-            $result = $statement->executeQuery();
+            $result = $statement->executeQuery($parameters);
 
             return new Success(new DoctrineDBALResultSet($this->connection(), $result));
-        }
-        catch (\Throwable $throwable)
-        {
+        } catch (\Throwable $throwable) {
             /** @noinspection PhpUnhandledExceptionInspection */
             throw adaptDbalThrowable($throwable);
         }
@@ -77,28 +71,22 @@ final class DoctrineDBALAdapter implements DatabaseAdapter
     public function transactional(callable $function): Promise
     {
         return call(
-            function () use ($function): \Generator
-            {
+            function () use ($function): \Generator {
                 /** @var \ServiceBus\Storage\Common\Transaction $transaction */
                 $transaction = yield $this->transaction();
 
-                try
-                {
+                try {
                     /** @var \Generator $generator */
                     $generator = $function($transaction);
 
                     yield from $generator;
 
                     yield $transaction->commit();
-                }
-                catch (\Throwable $throwable)
-                {
+                } catch (\Throwable $throwable) {
                     yield $transaction->rollback();
 
                     throw $throwable;
-                }
-                finally
-                {
+                } finally {
                     unset($transaction);
                 }
             }
@@ -107,8 +95,7 @@ final class DoctrineDBALAdapter implements DatabaseAdapter
 
     public function transaction(): Promise
     {
-        try
-        {
+        try {
             $this->logger->debug('START TRANSACTION');
 
             $this->connection()->beginTransaction();
@@ -116,8 +103,7 @@ final class DoctrineDBALAdapter implements DatabaseAdapter
             return new Success(new DoctrineDBALTransaction($this->connection(), $this->logger));
         }
         // @codeCoverageIgnoreStart
-        catch (\Throwable $exception)
-        {
+        catch (\Throwable $exception) {
             /** @noinspection PhpUnhandledExceptionInspection */
             throw adaptDbalThrowable($exception);
         }
@@ -127,12 +113,10 @@ final class DoctrineDBALAdapter implements DatabaseAdapter
     public function unescapeBinary($payload): string
     {
         /** @var resource|string $payload */
-        if (\is_resource($payload))
-        {
+        if (\is_resource($payload)) {
             $result = \stream_get_contents($payload, -1, 0);
 
-            if ($result !== false)
-            {
+            if ($result !== false) {
                 return $result;
             }
         }
@@ -147,14 +131,10 @@ final class DoctrineDBALAdapter implements DatabaseAdapter
      */
     private function connection(): Connection
     {
-        if ($this->connection === null)
-        {
-            try
-            {
+        if ($this->connection === null) {
+            try {
                 $this->connection = DriverManager::getConnection(['url' => $this->configuration->originalDSN]);
-            }
-            catch (\Throwable $throwable)
-            {
+            } catch (\Throwable $throwable) {
                 throw new InvalidConfigurationOptions($throwable->getMessage(), (int) $throwable->getCode(), $throwable);
             }
         }

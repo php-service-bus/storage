@@ -19,6 +19,7 @@ use PHPUnit\Framework\TestCase;
 use ServiceBus\Cache\InMemory\InMemoryStorage;
 use ServiceBus\Storage\Common\DatabaseAdapter;
 use ServiceBus\Storage\Sql\Finder\CachedSqlFinder;
+
 use function Amp\Promise\wait;
 use function Latitude\QueryBuilder\criteria;
 use function ServiceBus\Common\uuid;
@@ -69,8 +70,7 @@ final class CachedSqlFinderTest extends TestCase
     public function selectOne(): void
     {
         Loop::run(
-            static function (): \Generator
-            {
+            static function (): \Generator {
                 yield self::$adapter->execute(
                     'INSERT INTO qwerty(id, title) VALUES(?,?), (?,?)',
                     [
@@ -112,8 +112,7 @@ final class CachedSqlFinderTest extends TestCase
     public function selectAll(): void
     {
         Loop::run(
-            static function (): \Generator
-            {
+            static function (): \Generator {
                 yield self::$adapter->execute(
                     'INSERT INTO qwerty(id, title) VALUES(?,?), (?,?)',
                     [uuid(), 'test1', uuid(), 'test2']

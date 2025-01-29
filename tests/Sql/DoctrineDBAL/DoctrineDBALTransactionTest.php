@@ -17,6 +17,7 @@ namespace ServiceBus\Storage\Tests\Sql\DoctrineDBAL;
 use ServiceBus\Storage\Common\DatabaseAdapter;
 use ServiceBus\Storage\Sql\DoctrineDBAL\DoctrineDBALAdapter;
 use ServiceBus\Storage\Tests\Sql\BaseTransactionTest;
+
 use function Amp\Promise\wait;
 use function ServiceBus\Storage\Sql\DoctrineDBAL\inMemoryAdapter;
 
@@ -56,8 +57,7 @@ final class DoctrineDBALTransactionTest extends BaseTransactionTest
 
     protected static function getAdapter(): DatabaseAdapter
     {
-        if (isset(self::$adapter) === false)
-        {
+        if (isset(self::$adapter) === false) {
             self::$adapter = inMemoryAdapter();
         }
 

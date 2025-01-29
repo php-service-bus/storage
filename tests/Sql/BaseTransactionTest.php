@@ -21,6 +21,7 @@ use ServiceBus\Storage\Common\DatabaseAdapter;
 use ServiceBus\Storage\Common\Exceptions\UniqueConstraintViolationCheckFailed;
 use ServiceBus\Storage\Common\QueryExecutor;
 use ServiceBus\Storage\Common\Transaction;
+
 use function Amp\Promise\wait;
 use function ServiceBus\Storage\Sql\equalsCriteria;
 use function ServiceBus\Storage\Sql\fetchAll;
@@ -55,8 +56,7 @@ abstract class BaseTransactionTest extends TestCase
     public function simpleTransaction(): void
     {
         Loop::run(
-            static function (): \Generator
-            {
+            static function (): \Generator {
                 $adapter = static::getAdapter();
 
                 /** @var \ServiceBus\Storage\Common\Transaction $transaction */
@@ -88,13 +88,11 @@ abstract class BaseTransactionTest extends TestCase
     public function successTransactional(): void
     {
         Loop::run(
-            static function (): \Generator
-            {
+            static function (): \Generator {
                 $adapter = static::getAdapter();
 
                 yield $adapter->transactional(
-                    static function (QueryExecutor $executor): \Generator
-                    {
+                    static function (QueryExecutor $executor): \Generator {
                         yield $executor->execute(
                             'INSERT INTO test_result_set (id, value) VALUES (?,?), (?,?)',
                             [
@@ -119,8 +117,7 @@ abstract class BaseTransactionTest extends TestCase
     public function transactionWithReadData(): void
     {
         Loop::run(
-            static function (): \Generator
-            {
+            static function (): \Generator {
                 $adapter = static::getAdapter();
 
                 $uuid = 'cb9f20de-6a8e-4934-84b4-71da78e42697';
@@ -152,8 +149,7 @@ abstract class BaseTransactionTest extends TestCase
     public function rollback(): void
     {
         Loop::run(
-            static function (): \Generator
-            {
+            static function (): \Generator {
                 $adapter = static::getAdapter();
 
                 /** @var \ServiceBus\Storage\Common\Transaction $transaction */
@@ -186,13 +182,11 @@ abstract class BaseTransactionTest extends TestCase
         $this->expectException(UniqueConstraintViolationCheckFailed::class);
 
         Loop::run(
-            static function (): \Generator
-            {
+            static function (): \Generator {
                 $adapter = static::getAdapter();
 
                 yield $adapter->transactional(
-                    static function (Transaction $transaction): \Generator
-                    {
+                    static function (Transaction $transaction): \Generator {
                         $uuid = 'cb9f20de-6a8e-4934-84b4-71da78e42697';
 
                         $query = insertQuery('test_result_set', ['id' => $uuid, 'value' => 'value2'])->compile();

@@ -83,8 +83,7 @@ final class DoctrineDBALResultSet implements ResultSet
     {
         $this->currentRow = null;
 
-        if (++$this->currentPosition > $this->resultsCount)
-        {
+        if (++$this->currentPosition > $this->resultsCount) {
             return new Success(false);
         }
 
@@ -93,8 +92,7 @@ final class DoctrineDBALResultSet implements ResultSet
 
     public function getCurrent(): ?array
     {
-        if (null !== $this->currentRow)
-        {
+        if (null !== $this->currentRow) {
             /**
              * @psalm-var array<string, float|int|resource|string|null>|null $row
              * @var array                                                    $row
@@ -110,8 +108,7 @@ final class DoctrineDBALResultSet implements ResultSet
          */
         $data = $this->fetchResult[$this->currentPosition - 1] ?? null;
 
-        if (\is_array($data) && \count($data) === 0)
-        {
+        if (\is_array($data) && \count($data) === 0) {
             $data = null;
         }
 
@@ -120,14 +117,11 @@ final class DoctrineDBALResultSet implements ResultSet
 
     public function lastInsertId(): Promise
     {
-        try
-        {
+        try {
             $result = $this->connection->lastInsertId();
 
             return $result !== false ? new Success($result) : new Success(null);
-        }
-        catch (\Throwable $throwable)
-        {
+        } catch (\Throwable $throwable) {
             throw new ResultSetIterationFailed($throwable->getMessage(), (int) $throwable->getCode(), $throwable);
         }
     }

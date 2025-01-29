@@ -17,6 +17,7 @@ namespace ServiceBus\Storage\Tests\Sql\AmpPostgreSQL;
 use ServiceBus\Storage\Common\DatabaseAdapter;
 use ServiceBus\Storage\Sql\AmpPosgreSQL\AmpPostgreSQLAdapter;
 use ServiceBus\Storage\Tests\Sql\BaseTransactionTest;
+
 use function Amp\Promise\wait;
 use function ServiceBus\Storage\Sql\AmpPosgreSQL\postgreSqlAdapterFactory;
 
@@ -56,8 +57,7 @@ final class AmpPostgreSQLTransactionTest extends BaseTransactionTest
 
     protected static function getAdapter(): DatabaseAdapter
     {
-        if (isset(self::$adapter) === false)
-        {
+        if (isset(self::$adapter) === false) {
             self::$adapter = postgreSqlAdapterFactory((string) \getenv('TEST_POSTGRES_DSN'));
         }
 

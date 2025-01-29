@@ -18,6 +18,7 @@ use PHPUnit\Framework\TestCase;
 use ServiceBus\Storage\Common\DatabaseAdapter;
 use ServiceBus\Storage\Sql\Migration\SqlMigrationLoader;
 use ServiceBus\Storage\Sql\Migration\SqlMigrationProcessor;
+
 use function Amp\Promise\wait;
 use function ServiceBus\Storage\Sql\DoctrineDBAL\inMemoryAdapter;
 

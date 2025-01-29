@@ -16,6 +16,7 @@ use Amp\Promise;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use ServiceBus\Storage\Common\DatabaseAdapter;
+
 use function Amp\call;
 use function ServiceBus\Common\invokeReflectionMethod;
 use function ServiceBus\Common\readReflectionPropertyValue;
@@ -83,13 +84,11 @@ final class SqlMigrationProcessor
     private function process(MigrationType $type): Promise
     {
         return call(
-            function () use ($type): \Generator
-            {
+            function () use ($type): \Generator {
                 /** @var \ServiceBus\Storage\Common\Transaction $transaction */
                 $transaction = yield $this->storage->transaction();
 
-                try
-                {
+                try {
                     $executedQueries = 0;
 
                     /**
@@ -105,8 +104,7 @@ final class SqlMigrationProcessor
                      * @var string    $version
                      * @var Migration $migration
                      */
-                    foreach ($migrations as $version => $migration)
-                    {
+                    foreach ($migrations as $version => $migration) {
                         /**
                          * @var \ServiceBus\Storage\Common\ResultSet $resultSet
                          */
@@ -116,8 +114,7 @@ final class SqlMigrationProcessor
                         );
 
                         /** Migration was added earlier */
-                        if ($resultSet->affectedRows() === 0)
-                        {
+                        if ($resultSet->affectedRows() === 0) {
                             $this->logger->debug('Skip "{version}" migration', ['version' => $version]);
 
                             continue;
@@ -127,8 +124,7 @@ final class SqlMigrationProcessor
 
                         $parameters = $migration->parameters();
 
-                        foreach ($migration->queries() as $query)
-                        {
+                        foreach ($migration->queries() as $query) {
                             /**
                              * @psalm-var non-empty-string $queryParametersKey
                              * @phpstan-ignore varTag.nativeType
@@ -146,9 +142,7 @@ final class SqlMigrationProcessor
                     yield $transaction->commit();
 
                     return $executedQueries;
-                }
-                catch (\Throwable $throwable)
-                {
+                } catch (\Throwable $throwable) {
                     yield $transaction->rollback();
 
                     throw $throwable;

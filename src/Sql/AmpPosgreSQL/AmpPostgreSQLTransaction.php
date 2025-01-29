@@ -20,6 +20,7 @@ use Amp\Postgres\Transaction as AmpTransaction;
 use Amp\Promise;
 use Psr\Log\LoggerInterface;
 use ServiceBus\Storage\Common\Transaction;
+
 use function Amp\call;
 
 /**
@@ -47,8 +48,7 @@ final class AmpPostgreSQLTransaction implements Transaction
 
     public function __destruct()
     {
-        if ($this->transaction->isAlive())
-        {
+        if ($this->transaction->isAlive()) {
             $this->transaction->close();
         }
     }
@@ -56,10 +56,8 @@ final class AmpPostgreSQLTransaction implements Transaction
     public function execute(string $queryString, array $parameters = []): Promise
     {
         return call(
-            function () use ($queryString, $parameters): \Generator
-            {
-                try
-                {
+            function () use ($queryString, $parameters): \Generator {
+                try {
                     $this->logger->debug($queryString, $parameters);
 
                     /** @var AmpResultSet|PgSqlCommandResult|PooledResultSet|PqCommandResult $resultSet */
@@ -68,8 +66,7 @@ final class AmpPostgreSQLTransaction implements Transaction
                     return new AmpPostgreSQLResultSet($resultSet);
                 }
                 // @codeCoverageIgnoreStart
-                catch (\Throwable $throwable)
-                {
+                catch (\Throwable $throwable) {
                     throw adaptAmpThrowable($throwable);
                 }
                 // @codeCoverageIgnoreEnd
@@ -80,21 +77,16 @@ final class AmpPostgreSQLTransaction implements Transaction
     public function commit(): Promise
     {
         return call(
-            function (): \Generator
-            {
-                try
-                {
+            function (): \Generator {
+                try {
                     $this->logger->debug('COMMIT');
 
                     yield $this->transaction->commit();
                 }
                 // @codeCoverageIgnoreStart
-                catch (\Throwable $throwable)
-                {
+                catch (\Throwable $throwable) {
                     throw adaptAmpThrowable($throwable);
-                }
-                finally
-                {
+                } finally {
                     $this->transaction->close();
                 }
                 // @codeCoverageIgnoreEnd
@@ -105,21 +97,16 @@ final class AmpPostgreSQLTransaction implements Transaction
     public function rollback(): Promise
     {
         return call(
-            function (): \Generator
-            {
-                try
-                {
+            function (): \Generator {
+                try {
                     $this->logger->debug('ROLLBACK');
 
                     yield $this->transaction->rollback();
                 }
                 // @codeCoverageIgnoreStart
-                catch (\Throwable)
-                {
+                catch (\Throwable) {
                     /** We will not throw an exception */
-                }
-                finally
-                {
+                } finally {
                     $this->transaction->close();
                 }
                 // @codeCoverageIgnoreEnd
@@ -129,8 +116,7 @@ final class AmpPostgreSQLTransaction implements Transaction
 
     public function unescapeBinary($payload): string
     {
-        if (\is_resource($payload))
-        {
+        if (\is_resource($payload)) {
             $payload = \stream_get_contents($payload, -1, 0);
         }
 

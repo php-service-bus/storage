@@ -38,8 +38,7 @@ function adaptAmpThrowable(\Throwable $throwable): \Throwable
         );
     }
 
-    if ($throwable instanceof ConnectionException)
-    {
+    if ($throwable instanceof ConnectionException) {
         /** @psalm-suppress RedundantCast */
         return new InternalExceptions\ConnectionFailed(
             $throwable->getMessage(),

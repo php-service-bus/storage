@@ -21,6 +21,7 @@ use Amp\Promise;
 use Amp\Success;
 use ServiceBus\Storage\Common\Exceptions\ResultSetIterationFailed;
 use ServiceBus\Storage\Common\ResultSet;
+
 use function Amp\call;
 
 class AmpPostgreSQLResultSet implements ResultSet
@@ -44,18 +45,15 @@ class AmpPostgreSQLResultSet implements ResultSet
     {
         $this->advanceCalled = true;
 
-        try
-        {
-            if ($this->originalResultSet instanceof Iterator)
-            {
+        try {
+            if ($this->originalResultSet instanceof Iterator) {
                 return $this->originalResultSet->advance();
             }
 
             return new Success(false);
         }
         // @codeCoverageIgnoreStart
-        catch (\Throwable $throwable)
-        {
+        catch (\Throwable $throwable) {
             throw new ResultSetIterationFailed($throwable->getMessage(), (int) $throwable->getCode(), $throwable);
         }
         // @codeCoverageIgnoreEnd
@@ -63,10 +61,8 @@ class AmpPostgreSQLResultSet implements ResultSet
 
     public function getCurrent(): ?array
     {
-        try
-        {
-            if ($this->originalResultSet instanceof CommandResult)
-            {
+        try {
+            if ($this->originalResultSet instanceof CommandResult) {
                 return null;
             }
 
@@ -78,8 +74,7 @@ class AmpPostgreSQLResultSet implements ResultSet
             return $data;
         }
         // @codeCoverageIgnoreStart
-        catch (\Throwable $throwable)
-        {
+        catch (\Throwable $throwable) {
             throw new ResultSetIterationFailed($throwable->getMessage(), (int) $throwable->getCode(), $throwable);
         }
         // @codeCoverageIgnoreEnd
@@ -88,14 +83,10 @@ class AmpPostgreSQLResultSet implements ResultSet
     public function lastInsertId(): Promise
     {
         return call(
-            function (): \Generator
-            {
-                try
-                {
-                    if ($this->originalResultSet instanceof PooledResultSet)
-                    {
-                        if ($this->advanceCalled === false)
-                        {
+            function (): \Generator {
+                try {
+                    if ($this->originalResultSet instanceof PooledResultSet) {
+                        if ($this->advanceCalled === false) {
                             yield $this->originalResultSet->advance();
 
                             $this->advanceCalled = true;
@@ -104,22 +95,18 @@ class AmpPostgreSQLResultSet implements ResultSet
                         /** @var array<string, mixed> $result */
                         $result = $this->originalResultSet->getCurrent();
 
-                        if (\count($result) !== 0)
-                        {
+                        if (\count($result) !== 0) {
                             /** @var bool|int|string $value */
                             $value = \reset($result);
 
-                            if (false !== $value)
-                            {
+                            if (false !== $value) {
                                 return (string) $value;
                             }
                         }
                     }
 
                     return null;
-                }
-                catch (\Throwable $throwable)
-                {
+                } catch (\Throwable $throwable) {
                     throw new ResultSetIterationFailed($throwable->getMessage(), (int) $throwable->getCode(), $throwable);
                 }
                 // @codeCoverageIgnoreEnd
@@ -129,8 +116,7 @@ class AmpPostgreSQLResultSet implements ResultSet
 
     public function affectedRows(): int
     {
-        try
-        {
+        try {
             if (
                 $this->originalResultSet instanceof PgSqlCommandResult ||
                 $this->originalResultSet instanceof PqCommandResult
@@ -141,8 +127,7 @@ class AmpPostgreSQLResultSet implements ResultSet
             return 0;
         }
         // @codeCoverageIgnoreStart
-        catch (\Throwable $throwable)
-        {
+        catch (\Throwable $throwable) {
             throw new ResultSetIterationFailed($throwable->getMessage(), (int) $throwable->getCode(), $throwable);
         }
         // @codeCoverageIgnoreEnd

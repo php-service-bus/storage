@@ -21,6 +21,7 @@ use ServiceBus\Storage\Common\DatabaseAdapter;
 use ServiceBus\Storage\Common\Exceptions\OneResultExpected;
 use ServiceBus\Storage\Common\Exceptions\StorageInteractingFailed;
 use ServiceBus\Storage\Common\Exceptions\UniqueConstraintViolationCheckFailed;
+
 use function Amp\Promise\wait;
 use function Latitude\QueryBuilder\criteria;
 use function ServiceBus\Storage\Sql\equalsCriteria;
@@ -68,8 +69,7 @@ abstract class BaseStorageAdapterTest extends TestCase
     public function unescapeBinary(): void
     {
         Loop::run(
-            static function (): \Generator
-            {
+            static function (): \Generator {
                 $adapter = static::getAdapter();
 
                 $data = \sha1(\random_bytes(256));
@@ -103,8 +103,7 @@ abstract class BaseStorageAdapterTest extends TestCase
     public function resultSet(): void
     {
         Loop::run(
-            static function (): \Generator
-            {
+            static function (): \Generator {
                 $adapter = static::getAdapter();
 
                 $data = \sha1(\random_bytes(256));
@@ -138,8 +137,7 @@ abstract class BaseStorageAdapterTest extends TestCase
     public function emptyResultSet(): void
     {
         Loop::run(
-            static function (): \Generator
-            {
+            static function (): \Generator {
                 $adapter = static::getAdapter();
 
                 $iterator = yield $adapter->execute('SELECT * from storage_test_table');
@@ -158,8 +156,7 @@ abstract class BaseStorageAdapterTest extends TestCase
         $this->expectException(StorageInteractingFailed::class);
 
         Loop::run(
-            static function (): \Generator
-            {
+            static function (): \Generator {
                 yield find(
                     queryExecutor: static::getAdapter(),
                     tableName: 'asegfseg'
@@ -174,8 +171,7 @@ abstract class BaseStorageAdapterTest extends TestCase
     public function findOne(): void
     {
         Loop::run(
-            static function (): \Generator
-            {
+            static function (): \Generator {
                 $adapter = static::getAdapter();
 
                 yield self::importFixtures($adapter);
@@ -200,8 +196,7 @@ abstract class BaseStorageAdapterTest extends TestCase
     public function findOneWhenEmptySet(): void
     {
         Loop::run(
-            static function (): \Generator
-            {
+            static function (): \Generator {
                 $adapter = static::getAdapter();
 
                 /** @var \ServiceBus\Storage\Common\ResultSet $iterator */
@@ -226,8 +221,7 @@ abstract class BaseStorageAdapterTest extends TestCase
         $this->expectExceptionMessage('A single record was requested, but the result of the query execution contains several ("2")');
 
         Loop::run(
-            static function (): \Generator
-            {
+            static function (): \Generator {
                 $adapter = static::getAdapter();
 
                 yield self::importFixtures($adapter);
@@ -248,8 +242,7 @@ abstract class BaseStorageAdapterTest extends TestCase
         $this->expectException(UniqueConstraintViolationCheckFailed::class);
 
         Loop::run(
-            static function (): \Generator
-            {
+            static function (): \Generator {
                 $adapter = static::getAdapter();
 
                 yield $adapter->execute(
@@ -269,8 +262,7 @@ abstract class BaseStorageAdapterTest extends TestCase
     public function rowsCount(): void
     {
         Loop::run(
-            static function (): \Generator
-            {
+            static function (): \Generator {
                 $adapter = static::getAdapter();
 
                 /** @var \ServiceBus\Storage\Common\ResultSet $result */
