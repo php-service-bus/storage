@@ -129,7 +129,10 @@ final class SqlMigrationProcessor
 
                         foreach ($migration->queries() as $query)
                         {
-                            /** @psalm-var non-empty-string $queryParametersKey */
+                            /**
+                             * @psalm-var non-empty-string $queryParametersKey
+                             * @phpstan-ignore varTag.nativeType
+                             */
                             $queryParametersKey = \sha1($query);
 
                             $queryParameters = $parameters[$queryParametersKey] ?? [];

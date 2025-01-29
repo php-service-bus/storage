@@ -36,7 +36,10 @@ abstract class Migration
     {
         if ($query !== '')
         {
-            /** @psalm-var non-empty-string $queryKey */
+            /**
+             * @psalm-var non-empty-string $queryKey
+             * @phpstan-ignore varTag.nativeType
+             */
             $queryKey = \sha1($query);
 
             $this->queries[]             = $query;

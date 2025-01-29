@@ -46,7 +46,7 @@ interface ResultSet
      *
      * @throws \ServiceBus\Storage\Common\Exceptions\ResultSetIterationFailed
      */
-    public function lastInsertId(?string $sequence = null): Promise;
+    public function lastInsertId(): Promise;
 
     /**
      * Returns the number of rows affected by the last DELETE, INSERT, or UPDATE statement executed.

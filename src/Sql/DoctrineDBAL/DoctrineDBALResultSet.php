@@ -97,8 +97,8 @@ final class DoctrineDBALResultSet implements ResultSet
         {
             /**
              * @psalm-var array<string, float|int|resource|string|null>|null $row
-             *
              * @var array                                                    $row
+             * @phpstan-ignore varTag.nativeType
              */
             $row = $this->currentRow;
 
@@ -118,11 +118,11 @@ final class DoctrineDBALResultSet implements ResultSet
         return $this->currentRow = $data;
     }
 
-    public function lastInsertId(?string $sequence = null): Promise
+    public function lastInsertId(): Promise
     {
         try
         {
-            $result = $this->connection->lastInsertId($sequence);
+            $result = $this->connection->lastInsertId();
 
             return $result !== false ? new Success($result) : new Success(null);
         }

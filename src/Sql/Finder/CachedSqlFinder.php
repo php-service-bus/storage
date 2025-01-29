@@ -169,7 +169,10 @@ final class CachedSqlFinder implements SqlFinder
             limit: $limit
         );
 
-        /** @psalm-var non-empty-string $cacheKey */
+        /**
+         * @psalm-var non-empty-string $cacheKey
+         * @phpstan-ignore varTag.nativeType
+         */
         $cacheKey = \sha1(\serialize($queryData));
 
         return [

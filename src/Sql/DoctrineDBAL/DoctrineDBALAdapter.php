@@ -59,7 +59,11 @@ final class DoctrineDBALAdapter implements DatabaseAdapter
         try
         {
             $statement = $this->connection()->prepare($queryString);
-            $result    = $statement->executeQuery($parameters);
+            foreach ($parameters as $key => $value) {
+                $statement->bindValue($key, $value);
+            }
+
+            $result = $statement->executeQuery();
 
             return new Success(new DoctrineDBALResultSet($this->connection(), $result));
         }

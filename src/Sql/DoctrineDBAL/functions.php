@@ -21,6 +21,8 @@ use ServiceBus\Storage\Common\StorageConfiguration;
  *
  * @internal
  *
+ * @psalm-suppress RedundantCast
+ *
  * @return InternalExceptions\ConnectionFailed|InternalExceptions\StorageInteractingFailed|InternalExceptions\UniqueConstraintViolationCheckFailed
  */
 function adaptDbalThrowable(\Throwable $throwable): \Exception

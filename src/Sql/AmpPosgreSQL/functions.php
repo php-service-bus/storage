@@ -30,6 +30,7 @@ function adaptAmpThrowable(\Throwable $throwable): \Throwable
         $throwable instanceof QueryExecutionError &&
         \in_array((int) $throwable->getDiagnostics()['sqlstate'], [23503, 23505], true)
     ) {
+        /** @psalm-suppress RedundantCast */
         return new InternalExceptions\UniqueConstraintViolationCheckFailed(
             $throwable->getMessage(),
             (int) $throwable->getCode(),
@@ -39,6 +40,7 @@ function adaptAmpThrowable(\Throwable $throwable): \Throwable
 
     if ($throwable instanceof ConnectionException)
     {
+        /** @psalm-suppress RedundantCast */
         return new InternalExceptions\ConnectionFailed(
             $throwable->getMessage(),
             (int) $throwable->getCode(),

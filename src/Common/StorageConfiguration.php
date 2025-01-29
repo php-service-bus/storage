@@ -102,7 +102,6 @@ final class StorageConfiguration
     /**
      * All query parameters.
      *
-     * @psalm-readonly
      * @psalm-var array<array-key, string>
      *
      * @var array
@@ -122,13 +121,13 @@ final class StorageConfiguration
 
         /**
          * @psalm-var array{
-         *    scheme:non-empty-string|null,
-         *    host:non-empty-string|null,
-         *    port:positive-int|null,
-         *    user:non-empty-string|null,
-         *    pass:non-empty-string|null,
-         *    path:non-empty-string|null,
-         *    query:non-empty-string|null
+         *    scheme?: non-empty-string|null,
+         *    host?: non-empty-string|null,
+         *    port?: positive-int|null,
+         *    user?: non-empty-string|null,
+         *    pass?: non-empty-string|null,
+         *    path?: non-empty-string|null,
+         *    query?: non-empty-string|null
          * }|null|false $parsedDSN
          *
          * @var array|false|null $parsedDSN

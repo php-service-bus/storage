@@ -47,7 +47,11 @@ final class DoctrineDBALTransaction implements Transaction
         try
         {
             $statement = $this->connection->prepare($queryString);
-            $result = $statement->executeQuery($parameters);
+            foreach ($parameters as $key => $value) {
+                $statement->bindValue($key, $value);
+            }
+
+            $result = $statement->executeQuery();
 
             return new Success(new DoctrineDBALResultSet($this->connection, $result));
         }
@@ -62,6 +66,7 @@ final class DoctrineDBALTransaction implements Transaction
 
     public function commit(): Promise
     {
+        /** @phpstan-ignore return.type */
         return call(
             function (): void
             {
@@ -83,6 +88,7 @@ final class DoctrineDBALTransaction implements Transaction
 
     public function rollback(): Promise
     {
+        /** @phpstan-ignore return.type */
         return call(
             function (): void
             {
