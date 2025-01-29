@@ -19,7 +19,7 @@ use ServiceBus\Storage\Common\DatabaseAdapter;
 use ServiceBus\Storage\Common\Exceptions\ConnectionFailed;
 use ServiceBus\Storage\Common\StorageConfiguration;
 use ServiceBus\Storage\Sql\AmpPosgreSQL\AmpPostgreSQLAdapter;
-use ServiceBus\Storage\Tests\Sql\BaseStorageAdapterTest;
+use ServiceBus\Storage\Tests\Sql\BaseStorageAdapterTestCase;
 
 use function Amp\Promise\wait;
 use function ServiceBus\Storage\Sql\AmpPosgreSQL\postgreSqlAdapterFactory;
@@ -27,7 +27,7 @@ use function ServiceBus\Storage\Sql\AmpPosgreSQL\postgreSqlAdapterFactory;
 /**
  * @group amphp
  */
-final class AmpPostgreSQLAdapterTest extends BaseStorageAdapterTest
+final class AmpPostgreSQLAdapterTestCase extends BaseStorageAdapterTestCase
 {
     /**
      * @var AmpPostgreSQLAdapter|null

@@ -12,22 +12,22 @@
 
 declare(strict_types=1);
 
-namespace ServiceBus\Storage\Tests\Sql\DoctrineDBAL;
+namespace ServiceBus\Storage\Tests\Sql\AmpPostgreSQL;
 
 use ServiceBus\Storage\Common\DatabaseAdapter;
-use ServiceBus\Storage\Sql\DoctrineDBAL\DoctrineDBALAdapter;
-use ServiceBus\Storage\Tests\Sql\BaseTransactionTest;
+use ServiceBus\Storage\Sql\AmpPosgreSQL\AmpPostgreSQLAdapter;
+use ServiceBus\Storage\Tests\Sql\BaseTransactionTestCase;
 
 use function Amp\Promise\wait;
-use function ServiceBus\Storage\Sql\DoctrineDBAL\inMemoryAdapter;
+use function ServiceBus\Storage\Sql\AmpPosgreSQL\postgreSqlAdapterFactory;
 
 /**
- * @group inmemory
+ * @group amphp
  */
-final class DoctrineDBALTransactionTest extends BaseTransactionTest
+final class AmpPostgreSQLTransactionTestCase extends BaseTransactionTestCase
 {
     /**
-     * @var DoctrineDBALAdapter|null
+     * @var AmpPostgreSQLAdapter|null
      */
     private static $adapter;
 
@@ -39,7 +39,7 @@ final class DoctrineDBALTransactionTest extends BaseTransactionTest
 
         wait(
             $adapter->execute(
-                'CREATE TABLE IF NOT EXISTS test_result_set (id uuid PRIMARY KEY, value binary)'
+                'CREATE TABLE IF NOT EXISTS test_result_set (id uuid PRIMARY KEY, value bytea)'
             )
         );
     }
@@ -51,14 +51,14 @@ final class DoctrineDBALTransactionTest extends BaseTransactionTest
         $adapter = self::getAdapter();
 
         wait(
-            $adapter->execute('DROP TABLE test_result_set')
+            $adapter->execute('DROP TABLE IF EXISTS test_result_set')
         );
     }
 
     protected static function getAdapter(): DatabaseAdapter
     {
         if (isset(self::$adapter) === false) {
-            self::$adapter = inMemoryAdapter();
+            self::$adapter = postgreSqlAdapterFactory((string) \getenv('TEST_POSTGRES_DSN'));
         }
 
         return self::$adapter;

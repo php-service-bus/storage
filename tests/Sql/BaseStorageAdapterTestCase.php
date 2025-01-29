@@ -34,7 +34,7 @@ use function ServiceBus\Storage\Sql\unescapeBinary;
 /**
  *
  */
-abstract class BaseStorageAdapterTest extends TestCase
+abstract class BaseStorageAdapterTestCase extends TestCase
 {
     /**
      * Get database adapter.

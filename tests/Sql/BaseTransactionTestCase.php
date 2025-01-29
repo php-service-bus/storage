@@ -32,7 +32,7 @@ use function ServiceBus\Storage\Sql\selectQuery;
 /**
  *
  */
-abstract class BaseTransactionTest extends TestCase
+abstract class BaseTransactionTestCase extends TestCase
 {
     protected function tearDown(): void
     {

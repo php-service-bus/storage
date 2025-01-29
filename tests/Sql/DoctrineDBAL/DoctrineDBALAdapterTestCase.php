@@ -20,7 +20,7 @@ use ServiceBus\Storage\Common\Exceptions\ConnectionFailed;
 use ServiceBus\Storage\Common\Exceptions\StorageInteractingFailed;
 use ServiceBus\Storage\Common\StorageConfiguration;
 use ServiceBus\Storage\Sql\DoctrineDBAL\DoctrineDBALAdapter;
-use ServiceBus\Storage\Tests\Sql\BaseStorageAdapterTest;
+use ServiceBus\Storage\Tests\Sql\BaseStorageAdapterTestCase;
 
 use function Amp\Promise\wait;
 use function ServiceBus\Storage\Sql\DoctrineDBAL\inMemoryAdapter;
@@ -28,7 +28,7 @@ use function ServiceBus\Storage\Sql\DoctrineDBAL\inMemoryAdapter;
 /**
  * @group inmemory
  */
-final class DoctrineDBALAdapterTest extends BaseStorageAdapterTest
+final class DoctrineDBALAdapterTestCase extends BaseStorageAdapterTestCase
 {
     /**
      * @var DoctrineDBALAdapter|null
