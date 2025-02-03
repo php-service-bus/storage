@@ -42,8 +42,8 @@
     "php": ">=8.2",
     "ext-pgsql": "*",
     "amphp/amp": "v2.6.*",
-    "php-service-bus/common": "v5.2.x-dev",
-    "php-service-bus/cache": "v5.2.x-dev",
+    "php-service-bus/common": "v5.2",
+    "php-service-bus/cache": "v5.2",
     "amphp/postgres": "v1.4.*",
     "latitude/latitude": "v4.2.*",
     "psr/log": "v3.*",
@@ -52,13 +52,12 @@
     "amphp/file": "v2.0.*"
   },
   "require-dev": {
-    "php-service-bus/code-style-config": "v5.2.x-dev",
+    "php-service-bus/code-style-config": "v5.2",
     "phpunit/phpunit": "^10.0 || ^11.0",
     "vimeo/psalm": "^4.30 || ^5.4",
     "phpstan/phpstan": "^1.12 || ^2.0"
   },
   "prefer-stable": true,
-  "minimum-stability": "stable",
   "scripts": {
     "psalm": "rm -rf ~/.cache/psalm/ && ./vendor/bin/psalm --config=psalm.xml",
     "phpstan": "./vendor/bin/phpstan analyse src",
